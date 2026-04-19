@@ -1,4 +1,4 @@
-# fccu_societies_hub
+# FCCU Societies Hub
 
 A new Flutter project.
 
