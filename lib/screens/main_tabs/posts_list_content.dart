@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../widgets/media_gallery.dart';
+
 class PostsListContent extends StatelessWidget {
   const PostsListContent({super.key});
 
@@ -12,6 +14,7 @@ class PostsListContent extends StatelessWidget {
       posterName: 'Society Name',
       postedAt: DateTime.now(),
       content: 'Post Description\nWith multiple lines\nAnd potentially rich text.',
+      imageUrls: [],
       favorites: 1_000_000,
       comments: 92,
       bookmarks: 1_400,
@@ -25,6 +28,7 @@ class PostCard extends StatelessWidget {
     required this.posterName,
     required this.postedAt,
     required this.content,
+    required this.imageUrls,
     required this.favorites,
     required this.comments,
     required this.bookmarks,
@@ -33,6 +37,7 @@ class PostCard extends StatelessWidget {
   final String posterName;
   final DateTime postedAt;
   final String content;
+  final List<String> imageUrls;
   final int favorites;
   final int comments;
   final int bookmarks;
@@ -66,6 +71,7 @@ class PostCard extends StatelessWidget {
 
         // Body (Title, Description)
         Padding(padding: const EdgeInsets.all(16), child: Text(content)),
+        if (imageUrls.isNotEmpty) MediaGallery(images: imageUrls),
 
         const Divider(height: 1),
 
