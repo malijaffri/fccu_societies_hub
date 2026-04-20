@@ -45,7 +45,6 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Card(
     margin: const EdgeInsets.fromLTRB(4, 4, 4, 16),
-    elevation: 1,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
