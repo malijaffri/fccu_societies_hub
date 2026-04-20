@@ -11,8 +11,9 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _TabData {
-  const _TabData(this.widget, this.tab);
+  const _TabData(this.name, this.widget, this.tab);
 
+  final String name;
   final Widget widget;
   final Widget tab;
 }
@@ -22,6 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   static const List<_TabData> _screens = [
     _TabData(
+      'Posts',
       PostsListContent(),
       NavigationDestination(
         selectedIcon: Icon(Icons.chat_bubble),
@@ -30,6 +32,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       ),
     ),
     _TabData(
+      'Events',
       Center(child: Text('Events Screen Placeholder')),
       NavigationDestination(
         selectedIcon: Icon(Icons.access_time_filled),
@@ -38,10 +41,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       ),
     ),
     _TabData(
+      'New',
       Center(child: Text('Create Post/Event Placeholder')),
       NavigationDestination(selectedIcon: Icon(Icons.add_circle), icon: Icon(Icons.add_circle_outline), label: 'New'),
     ),
     _TabData(
+      'Search',
       Center(child: Text('Search Screen Placeholder')),
       NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
     ),
@@ -50,7 +55,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('Posts'),
+      title: Text(_screens[_currentIndex].name),
       centerTitle: true,
       actions: [
         PopupMenuButton<String>(
