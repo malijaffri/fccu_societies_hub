@@ -1,8 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PostsListContent extends StatelessWidget {
   const PostsListContent({super.key});
 
   @override
-  Widget build(BuildContext context) => const Center(child: Text('Post Content'));
+  Widget build(BuildContext context) => ListView.builder(
+    padding: const EdgeInsets.all(16),
+    itemCount: 3, // TODO: Mock data count
+    itemBuilder: (context, index) => PostCard(
+      posterName: 'Society Name',
+      postedAt: DateTime.now(),
+      content: 'Post Description\nWith multiple lines\nAnd potentially rich text.',
+      favorites: 1_000_000,
+      comments: 92,
+      bookmarks: 1_400,
+    ),
+  );
+}
+
+class PostCard extends StatelessWidget {
+  const PostCard({
+    super.key,
+    required this.posterName,
+    required this.postedAt,
+    required this.content,
+    required this.favorites,
+    required this.comments,
+    required this.bookmarks,
+  });
+
+  final String posterName;
+  final DateTime postedAt;
+  final String content;
+  final int favorites;
+  final int comments;
+  final int bookmarks;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    margin: const EdgeInsets.fromLTRB(4, 4, 4, 16),
+    elevation: 1,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header (Avatar, Poster, Date)
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const CircleAvatar(child: Icon(Icons.person)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(posterName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ),
+              Text(
+                DateFormat('d MMM yyyy').format(postedAt),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+
+        const Divider(height: 1),
+
+        // Body (Title, Description)
+        Padding(padding: const EdgeInsets.all(16), child: Text(content)),
+
+        const Divider(height: 1),
+
+        // Footer (Actions)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {}),
+                  Text(_formatNumber(favorites)),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(icon: const Icon(Icons.chat_bubble_outline), onPressed: () {}),
+                  Text(_formatNumber(comments)),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(icon: const Icon(Icons.bookmark_border), onPressed: () {}),
+                  Text(_formatNumber(bookmarks)),
+                ],
+              ),
+              IconButton(icon: const Icon(Icons.share_outlined), onPressed: () {}),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+
+  String _formatNumber(int number) {
+    if (number < 1000) return number.toString();
+
+    return NumberFormat.compact().format(number);
+  }
 }
