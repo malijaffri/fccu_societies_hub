@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'main_tabs/events_list_content.dart';
-import 'main_tabs/new_post_content.dart';
+import 'main_tabs/new_post_form.dart';
 import 'main_tabs/posts_list_content.dart';
-import 'main_tabs/search_content.dart';
+import 'main_tabs/search_form.dart';
 import 'welcome_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -45,10 +45,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ),
     _TabData(
       'New',
-      NewPostContent(),
+      NewPostForm(),
       NavigationDestination(selectedIcon: Icon(Icons.add_circle), icon: Icon(Icons.add_circle_outline), label: 'New'),
     ),
-    _TabData('Search', SearchContent(), NavigationDestination(icon: Icon(Icons.search), label: 'Search')),
+    _TabData('Search', SearchForm(), NavigationDestination(icon: Icon(Icons.search), label: 'Search')),
   ];
 
   @override
