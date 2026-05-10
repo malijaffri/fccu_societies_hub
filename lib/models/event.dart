@@ -14,7 +14,7 @@ class Event {
 
   final String? imageUrl;
 
-  Event({
+  const Event({
     required this.id,
     required this.societyId,
     required this.societyName,

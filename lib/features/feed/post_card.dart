@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:fccu_societies_hub/models/media.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
+
   final VoidCallback? onTap;
   final VoidCallback? onLike;
   final VoidCallback? onComment;
+  final VoidCallback? onShare;
 
-  const PostCard({super.key, required this.post, this.onTap, this.onLike, this.onComment});
+  const PostCard({super.key, required this.post, this.onTap, this.onLike, this.onComment, this.onShare});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class PostCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   _PostHeader(post: post),
 
@@ -47,9 +50,11 @@ class PostCard extends StatelessWidget {
                     style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5),
                   ),
 
+                  if (post.media.isNotEmpty) ...[const SizedBox(height: 12), _PostMediaGrid(media: post.media)],
+
                   const SizedBox(height: 14),
 
-                  _PostActions(post: post, onLike: onLike, onComment: onComment),
+                  _PostActions(post: post, onLike: onLike, onComment: onComment, onShare: onShare),
                 ],
               ),
             ),
@@ -71,7 +76,7 @@ class _PostHeader extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         CircleAvatar(
           radius: 22,
@@ -81,7 +86,7 @@ class _PostHeader extends StatelessWidget {
               ? Text(
                   post.societyName.split(' ').where((e) => e.isNotEmpty).map((e) => e[0]).join().toUpperCase(),
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: .w700,
                     color: colorScheme.onSecondaryContainer,
                   ),
                 )
@@ -94,12 +99,9 @@ class _PostHeader extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(top: 2),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
-                Text(
-                  post.societyName,
-                  style: theme.textTheme.titleMedium?.copyWith(fontSize: 15.5, fontWeight: FontWeight.w600),
-                ),
+                Text(post.societyName, style: theme.textTheme.titleMedium?.copyWith(fontSize: 15.5, fontWeight: .w600)),
 
                 const SizedBox(height: 2),
 
@@ -112,18 +114,227 @@ class _PostHeader extends StatelessWidget {
           ),
         ),
 
-        IconButton(onPressed: () {}, visualDensity: VisualDensity.compact, icon: const Icon(Icons.more_horiz_rounded)),
+        IconButton(onPressed: () {}, visualDensity: .compact, icon: const Icon(Icons.more_horiz_rounded)),
       ],
     );
   }
 }
 
+class _PostMediaGrid extends StatelessWidget {
+  final List<Media> media;
+
+  const _PostMediaGrid({required this.media});
+
+  @override
+  Widget build(BuildContext context) => switch (media.length) {
+    1 => _SingleImage(media: media.first),
+    2 => _TwoImageGrid(media: (media[0], media[1])),
+    3 => _ThreeImageGrid(media: (media[0], media[1], media[2])),
+    _ => _FourImageGrid(media: (media[0], media[1], media[2], media[3]), extraMedia: media.skip(4).toList()),
+  };
+}
+
+class _SingleImage extends StatelessWidget {
+  final Media media;
+
+  const _SingleImage({required this.media});
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: AspectRatio(
+      aspectRatio: 16 / 10,
+      child: Image.network(media.url, fit: .cover),
+    ),
+  );
+}
+
+class _TwoImageGrid extends StatelessWidget {
+  final (Media, Media) media;
+
+  const _TwoImageGrid({required this.media});
+
+  @override
+  Widget build(BuildContext context) => AspectRatio(
+    aspectRatio: 16 / 10,
+    child: Row(
+      children: [
+        Expanded(
+          child: _GridImage(
+            url: media.$1.url,
+            borderRadius: const .only(topLeft: .circular(12), bottomLeft: .circular(12)),
+            height: .infinity,
+          ),
+        ),
+
+        const SizedBox(width: 2),
+
+        Expanded(
+          child: _GridImage(
+            url: media.$2.url,
+            borderRadius: const .only(topRight: .circular(12), bottomRight: .circular(12)),
+            height: .infinity,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _ThreeImageGrid extends StatelessWidget {
+  final (Media, Media, Media) media;
+
+  const _ThreeImageGrid({required this.media});
+
+  @override
+  Widget build(BuildContext context) => AspectRatio(
+    aspectRatio: 16 / 10,
+    child: Row(
+      children: [
+        Expanded(
+          child: _GridImage(
+            url: media.$1.url,
+            borderRadius: const .only(topLeft: .circular(12), bottomLeft: .circular(12)),
+            height: .infinity,
+          ),
+        ),
+
+        const SizedBox(width: 2),
+
+        Expanded(
+          child: Column(
+            children: [
+              Expanded(
+                child: _GridImage(
+                  url: media.$2.url,
+                  borderRadius: const .only(topRight: .circular(12)),
+                  width: .infinity,
+                ),
+              ),
+
+              const SizedBox(height: 2),
+
+              Expanded(
+                child: _GridImage(
+                  url: media.$3.url,
+                  borderRadius: const .only(bottomRight: .circular(12)),
+                  width: .infinity,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _FourImageGrid extends StatelessWidget {
+  final (Media, Media, Media, Media) media;
+  final List<Media> extraMedia;
+
+  const _FourImageGrid({required this.media, this.extraMedia = const []});
+
+  @override
+  Widget build(BuildContext context) => AspectRatio(
+    aspectRatio: 16 / 10,
+    child: Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: _GridImage(
+                  url: media.$1.url,
+                  borderRadius: const .only(topLeft: .circular(12)),
+                  height: .infinity,
+                ),
+              ),
+
+              const SizedBox(width: 2),
+
+              Expanded(
+                child: _GridImage(
+                  url: media.$2.url,
+                  borderRadius: const .only(topRight: .circular(12)),
+                  height: .infinity,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 2),
+
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: _GridImage(
+                  url: media.$3.url,
+                  borderRadius: const .only(bottomLeft: .circular(12)),
+                  height: .infinity,
+                ),
+              ),
+
+              const SizedBox(width: 2),
+
+              Expanded(
+                child: Stack(
+                  fit: .expand,
+                  children: [
+                    _GridImage(
+                      url: media.$4.url,
+                      borderRadius: const .only(bottomRight: .circular(12)),
+                      height: .infinity,
+                    ),
+
+                    if (extraMedia.isNotEmpty)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          borderRadius: const .only(bottomRight: .circular(12)),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '+${extraMedia.length + 1}',
+                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: .w700),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _GridImage extends StatelessWidget {
+  final String url;
+  final BorderRadius borderRadius;
+  final double? width;
+  final double? height;
+
+  const _GridImage({required this.url, required this.borderRadius, this.width, this.height});
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: borderRadius,
+    child: Image.network(url, fit: .cover, width: width, height: height),
+  );
+}
+
 class _PostActions extends StatelessWidget {
   final Post post;
+
   final VoidCallback? onLike;
   final VoidCallback? onComment;
+  final VoidCallback? onShare;
 
-  const _PostActions({required this.post, this.onLike, this.onComment});
+  const _PostActions({required this.post, this.onLike, this.onComment, this.onShare});
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +345,8 @@ class _PostActions extends StatelessWidget {
       children: [
         _ActionButton(
           icon: post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-          label: _formatNumber(post.likeCount),
           color: post.isLiked ? Colors.red : colorScheme.onSurfaceVariant,
+          label: _formatNumber(post.likeCount),
           onTap: onLike,
         ),
 
@@ -143,10 +354,14 @@ class _PostActions extends StatelessWidget {
 
         _ActionButton(
           icon: Icons.mode_comment_outlined,
-          label: _formatNumber(post.commentCount),
           color: colorScheme.onSurfaceVariant,
+          label: _formatNumber(post.commentCount),
           onTap: onComment,
         ),
+
+        const SizedBox(width: 20),
+
+        _ActionButton(icon: Icons.share_outlined, color: colorScheme.onSurfaceVariant, onTap: onShare),
       ],
     );
   }
@@ -154,11 +369,12 @@ class _PostActions extends StatelessWidget {
 
 class _ActionButton extends StatelessWidget {
   final IconData icon;
-  final String label;
   final Color color;
+  final String? label;
+
   final VoidCallback? onTap;
 
-  const _ActionButton({required this.icon, required this.label, required this.color, this.onTap});
+  const _ActionButton({required this.icon, required this.color, this.label, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -173,12 +389,14 @@ class _ActionButton extends StatelessWidget {
           children: [
             Icon(icon, size: 21, color: color),
 
-            const SizedBox(width: 6),
+            if (label != null) ...[
+              const SizedBox(width: 6),
 
-            Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(color: color, fontWeight: FontWeight.w500),
-            ),
+              Text(
+                label!,
+                style: theme.textTheme.bodyMedium?.copyWith(color: color, fontWeight: .w500),
+              ),
+            ],
           ],
         ),
       ),

@@ -49,7 +49,7 @@ List<Post> mockPosts({int count = 10}) => List.generate(
     authorId: 'user_1',
     authorName: 'Ali',
     content: 'This is a sample post #$i',
-    media: [],
+    media: .generate(i, (j) => const Media(url: 'https://placehold.co/600x600.jpg', type: .image)),
     likeCount: i * 3,
     commentCount: i,
     isLiked: i % 2 == 0,

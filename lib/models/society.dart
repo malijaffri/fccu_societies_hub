@@ -8,7 +8,7 @@ class Society {
   final bool isFollowed;
   final bool isMember;
 
-  Society({
+  const Society({
     required this.id,
     required this.name,
     this.imageUrl,
