@@ -2,7 +2,7 @@ class Media {
   final String url;
   final MediaType type;
 
-  Media({required this.url, required this.type});
+  const Media({required this.url, required this.type});
 }
 
 enum MediaType {

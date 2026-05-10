@@ -10,7 +10,7 @@ class Comment {
   final String content;
   final DateTime createdAt;
 
-  Comment({
+  const Comment({
     required this.id,
     required this.postId,
     required this.userId,
