@@ -13,7 +13,8 @@ class PostsListContent extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: posts.length,
-      itemBuilder: (context, index) => PostCard(post: posts[index], onTap: () {}, onLike: () {}, onComment: () {}),
+      itemBuilder: (context, index) =>
+          PostCard(post: posts[index], onTap: () {}, onLike: () {}, onComment: () {}, onShare: () {}),
     );
   }
 }
