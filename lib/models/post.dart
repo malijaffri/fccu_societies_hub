@@ -39,8 +39,9 @@ class Post {
   });
 }
 
-List<Post> mockPosts = List.generate(10, (i) {
-  return Post(
+List<Post> mockPosts({int count = 10}) => List.generate(
+  count,
+  (i) => Post(
     id: 'post_$i',
     societyId: 'soc_1',
     societyName: 'CS Society',
@@ -53,5 +54,5 @@ List<Post> mockPosts = List.generate(10, (i) {
     commentCount: i,
     isLiked: i % 2 == 0,
     createdAt: DateTime.now().subtract(Duration(hours: i)),
-  );
-});
+  ),
+);
