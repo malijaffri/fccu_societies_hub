@@ -5,6 +5,7 @@ import 'package:fccu_societies_hub/features/create_event/screens/create_event_sc
 import 'package:fccu_societies_hub/features/create_post/screens/create_post_screen.dart';
 import 'package:fccu_societies_hub/features/events/screens/events_screen.dart';
 import 'package:fccu_societies_hub/features/feed/screens/feed_screen.dart';
+import 'package:fccu_societies_hub/features/post/screens/post_details_screen.dart';
 import 'package:fccu_societies_hub/features/search/screens/search_screen.dart';
 
 final appRouter = GoRouter(
@@ -27,6 +28,11 @@ final appRouter = GoRouter(
           routes: [GoRoute(path: '/events', builder: (context, state) => const EventsScreen())],
         ),
       ],
+    ),
+
+    GoRoute(
+      path: '/post/:id',
+      builder: (context, state) => PostDetailsScreen(postId: state.pathParameters['id']!),
     ),
 
     GoRoute(path: '/create-post', builder: (context, state) => const CreatePostScreen()),

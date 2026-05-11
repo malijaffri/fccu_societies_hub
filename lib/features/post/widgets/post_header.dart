@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/core/utils/time_formatter.dart';
 import 'package:fccu_societies_hub/models/post.dart';
+import 'package:fccu_societies_hub/widgets/avatar.dart';
 
 class PostHeader extends StatelessWidget {
   final Post post;
@@ -17,19 +18,11 @@ class PostHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: .start,
       children: [
-        CircleAvatar(
+        Avatar(
+          avatarUrl: post.societyImage,
+          name: post.societyName,
           radius: 22,
-          backgroundColor: colorScheme.secondaryContainer,
-          backgroundImage: post.societyImage != null ? NetworkImage(post.societyImage!) : null,
-          child: post.societyImage == null
-              ? Text(
-                  post.societyName.split(' ').where((e) => e.isNotEmpty).map((e) => e[0]).join().toUpperCase(),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: .w700,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                )
-              : null,
+          textStyle: theme.textTheme.titleMedium,
         ),
 
         const SizedBox(width: AppSpacing.s_12),

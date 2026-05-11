@@ -8,6 +8,7 @@ class Comment {
   final String? userAvatar;
 
   final String content;
+
   final DateTime createdAt;
 
   const Comment({

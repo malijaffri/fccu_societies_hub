@@ -1,10 +1,10 @@
 import 'package:fccu_societies_hub/models/media.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
-List<Post> mockPosts({int count = 10}) => List.generate(
+List<Post> mockPosts({int count = 10, String? id}) => List.generate(
   count,
   (i) => Post(
-    id: 'post_$i',
+    id: id ?? 'post_$i',
     societyId: 'soc_1',
     societyName: 'CS Society',
     societyImage: null,

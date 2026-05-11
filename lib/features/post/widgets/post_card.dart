@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
@@ -10,12 +11,9 @@ import 'package:fccu_societies_hub/models/post.dart';
 class PostCard extends StatelessWidget {
   final Post post;
 
-  final VoidCallback? onTap;
-  final VoidCallback? onLike;
-  final VoidCallback? onComment;
-  final VoidCallback? onShare;
+  final bool compact;
 
-  const PostCard({super.key, required this.post, this.onTap, this.onLike, this.onComment, this.onShare});
+  const PostCard({super.key, required this.post, this.compact = true});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,7 @@ class PostCard extends StatelessWidget {
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(AppRadius.r_16),
-            onTap: onTap,
+            onTap: compact ? () => context.push('/post/${post.id}') : null,
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.s_16),
               child: Column(
@@ -55,12 +53,13 @@ class PostCard extends StatelessWidget {
 
                   if (post.media.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.s_12),
+
                     PostMediaGrid(media: post.media),
                   ],
 
-                  const SizedBox(height: AppSpacing.s_14),
+                  const SizedBox(height: AppSpacing.s_8),
 
-                  PostActions(post: post, onLike: onLike, onComment: onComment, onShare: onShare),
+                  PostActions(post: post, onLike: () {}, onComment: () {}, onShare: () {}),
                 ],
               ),
             ),
