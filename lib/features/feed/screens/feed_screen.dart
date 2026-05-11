@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/features/feed/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/profile/widgets/profile_menu_sheet.dart';
+import 'package:fccu_societies_hub/mock/mock_posts.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({super.key});
@@ -33,11 +35,11 @@ class FeedScreen extends StatelessWidget {
         ),
       ),
 
-      body: const TabBarView(
+      body: TabBarView(
         children: [
-          Center(child: Text('Followed Feed')),
+          PostsList(posts: mockPosts(count: 10)),
 
-          Center(child: Text('Discover Feed')),
+          PostsList(posts: mockPosts(count: 20)),
         ],
       ),
     ),
