@@ -26,7 +26,7 @@ class _SingleImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(AppRadius.r_12),
+    borderRadius: .circular(AppRadius.r_12),
     child: AspectRatio(
       aspectRatio: 16 / 10,
       child: Image.network(media.url, fit: .cover),

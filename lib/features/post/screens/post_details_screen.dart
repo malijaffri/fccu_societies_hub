@@ -31,20 +31,20 @@ class PostDetailsScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.only(top: AppSpacing.s_8, bottom: AppSpacing.s_12),
+              padding: const .only(top: AppSpacing.s_8, bottom: AppSpacing.s_12),
 
               children: [
                 PostCard(post: post, compact: false),
 
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.s_16, AppSpacing.s_12, AppSpacing.s_16, AppSpacing.s_8),
+                  padding: const .fromLTRB(AppSpacing.s_16, AppSpacing.s_12, AppSpacing.s_16, AppSpacing.s_8),
 
                   child: Text('Comments', style: textTheme.titleMedium),
                 ),
 
                 if (comments.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(AppSpacing.s_16),
+                    padding: const .all(AppSpacing.s_16),
 
                     child: Text(
                       'No comments yet.',

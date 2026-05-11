@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 
 final _colorSchemeSeed = Colors.indigo;
-final _cardThemeShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.r_16));
+final _cardThemeShape = RoundedRectangleBorder(borderRadius: .circular(AppRadius.r_16));
 const _navigationBarTheme = NavigationBarThemeData(elevation: 0, labelBehavior: .alwaysShow);
 const _appBarTheme = AppBarTheme(centerTitle: false, elevation: 0);
 final _inputDecorationTheme = InputDecorationTheme(
@@ -22,9 +22,9 @@ final lightTheme = ThemeData(
   brightness: .light,
   colorSchemeSeed: _colorSchemeSeed,
 
-  scaffoldBackgroundColor: const Color(0xFFF6F7FB),
+  scaffoldBackgroundColor: const .new(0xFFF6F7FB),
 
-  cardTheme: .new(elevation: 1, margin: EdgeInsets.zero, shape: _cardThemeShape),
+  cardTheme: .new(elevation: 1, margin: .zero, shape: _cardThemeShape),
   navigationBarTheme: _navigationBarTheme,
   appBarTheme: _appBarTheme,
   inputDecorationTheme: _inputDecorationTheme,
@@ -36,9 +36,9 @@ final darkTheme = ThemeData(
   brightness: .dark,
   colorSchemeSeed: _colorSchemeSeed,
 
-  scaffoldBackgroundColor: const Color(0xFF121212),
+  scaffoldBackgroundColor: const .new(0xFF121212),
 
-  cardTheme: .new(elevation: 0, margin: EdgeInsets.zero, shape: _cardThemeShape),
+  cardTheme: .new(elevation: 0, margin: .zero, shape: _cardThemeShape),
   navigationBarTheme: _navigationBarTheme,
   appBarTheme: _appBarTheme,
   inputDecorationTheme: _inputDecorationTheme,

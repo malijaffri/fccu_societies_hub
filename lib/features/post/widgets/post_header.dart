@@ -29,7 +29,7 @@ class PostHeader extends StatelessWidget {
 
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.s_2),
+            padding: const .only(top: AppSpacing.s_2),
             child: Column(
               crossAxisAlignment: .start,
               children: [

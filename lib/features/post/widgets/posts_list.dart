@@ -11,7 +11,7 @@ class PostsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListView.builder(
-    padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_8),
+    padding: const .symmetric(vertical: AppSpacing.s_8),
     itemCount: posts.length,
     itemBuilder: (context, index) {
       final post = posts[index];

@@ -16,7 +16,7 @@ class CommentTile extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s_16, vertical: AppSpacing.s_12),
+      padding: const .symmetric(horizontal: AppSpacing.s_16, vertical: AppSpacing.s_12),
 
       child: Row(
         crossAxisAlignment: .start,

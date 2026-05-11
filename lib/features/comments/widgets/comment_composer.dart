@@ -13,7 +13,7 @@ class CommentComposer extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.s_12, AppSpacing.s_8, AppSpacing.s_12, AppSpacing.s_12),
+      padding: const .fromLTRB(AppSpacing.s_12, AppSpacing.s_8, AppSpacing.s_12, AppSpacing.s_12),
 
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -41,7 +41,7 @@ class CommentComposer extends StatelessWidget {
 
                 isDense: true,
 
-                contentPadding: const EdgeInsets.all(AppSpacing.s_12),
+                contentPadding: const .all(AppSpacing.s_12),
 
                 border: OutlineInputBorder(borderRadius: .circular(AppRadius.r_24)),
               ),

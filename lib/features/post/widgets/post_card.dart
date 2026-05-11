@@ -21,24 +21,24 @@ class PostCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s_12, vertical: AppSpacing.s_8),
+      padding: const .symmetric(horizontal: AppSpacing.s_12, vertical: AppSpacing.s_8),
       child: Material(
         color: colorScheme.surface,
         elevation: theme.brightness == Brightness.dark ? 0 : 1.5,
         shadowColor: Colors.black.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppRadius.r_16),
+        borderRadius: .circular(AppRadius.r_16),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.r_16),
+            borderRadius: .circular(AppRadius.r_16),
             border: theme.brightness == Brightness.dark
                 ? Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4))
                 : null,
           ),
           child: InkWell(
-            borderRadius: BorderRadius.circular(AppRadius.r_16),
+            borderRadius: .circular(AppRadius.r_16),
             onTap: compact ? () => context.push('/post/${post.id}') : null,
             child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.s_16),
+              padding: const .all(AppSpacing.s_16),
               child: Column(
                 crossAxisAlignment: .start,
                 children: [

@@ -19,7 +19,7 @@ class FeedScreen extends StatelessWidget {
 
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.s_12),
+            padding: const .only(right: AppSpacing.s_12),
             child: GestureDetector(onTap: () => showProfileMenu(context), child: const Avatar()),
           ),
         ],
@@ -27,6 +27,7 @@ class FeedScreen extends StatelessWidget {
         bottom: const TabBar(
           tabs: [
             Tab(text: 'Followed'),
+
             Tab(text: 'Discover'),
           ],
         ),

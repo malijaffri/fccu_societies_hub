@@ -62,7 +62,7 @@ class _ActionButton extends StatelessWidget {
       borderRadius: .circular(AppRadius.pill),
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.s_8),
+        padding: const .all(AppSpacing.s_8),
         child: Row(
           children: [
             Icon(icon, size: 21, color: color),
