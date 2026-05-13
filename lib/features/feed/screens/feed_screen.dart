@@ -35,9 +35,9 @@ class FeedScreen extends StatelessWidget {
 
       body: TabBarView(
         children: [
-          PostsList(posts: mockPosts(count: 10)),
+          PostsList(posts: mockPosts),
 
-          PostsList(posts: mockPosts(count: 20)),
+          PostsList(posts: mockPosts),
         ],
       ),
     ),

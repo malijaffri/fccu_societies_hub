@@ -18,9 +18,9 @@ class PostDetailsScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    final post = mockPosts().firstWhere((post) => post.id == postId);
+    final post = mockPosts.firstWhere((post) => post.id == postId);
 
-    final comments = mockComments(postId: postId).where((comment) => comment.postId == postId).toList();
+    final comments = mockComments.where((comment) => comment.postId == postId).toList();
 
     return Scaffold(
       appBar: AppBar(),

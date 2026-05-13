@@ -13,10 +13,6 @@ class PostsList extends StatelessWidget {
   Widget build(BuildContext context) => ListView.builder(
     padding: const .symmetric(vertical: AppSpacing.s_8),
     itemCount: posts.length,
-    itemBuilder: (context, index) {
-      final post = posts[index];
-
-      return PostCard(post: post);
-    },
+    itemBuilder: (context, index) => PostCard(post: posts[index]),
   );
 }

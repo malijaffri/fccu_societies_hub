@@ -3,8 +3,10 @@ class Society {
 
   final String name;
   final String? imageUrl;
-  final String? bio;
+  final String? description;
 
+  final int followerCount;
+  final int memberCount;
   final bool isFollowed;
   final bool isMember;
 
@@ -12,7 +14,9 @@ class Society {
     required this.id,
     required this.name,
     this.imageUrl,
-    this.bio,
+    this.description,
+    required this.followerCount,
+    required this.memberCount,
     required this.isFollowed,
     required this.isMember,
   });

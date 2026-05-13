@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
-import 'package:fccu_societies_hub/core/utils/time_formatter.dart';
 import 'package:fccu_societies_hub/models/comment.dart';
 import 'package:fccu_societies_hub/widgets/avatar.dart';
 
@@ -42,7 +42,7 @@ class CommentTile extends StatelessWidget {
                     ),
 
                     Text(
-                      TimeFormatter.formatPast(comment.createdAt),
+                      timeago.format(comment.createdAt, locale: 'en_short'),
 
                       style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                     ),

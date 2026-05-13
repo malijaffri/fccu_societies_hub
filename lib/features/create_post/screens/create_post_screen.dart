@@ -120,7 +120,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
             children: [
               SocietySelector(
-                societies: mockSocieties(),
+                societies: mockSocieties,
 
                 value: _selectedSocietyId,
 

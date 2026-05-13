@@ -1,32 +1,144 @@
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatelessWidget {
+import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/features/events/widgets/event_card.dart';
+import 'package:fccu_societies_hub/features/post/widgets/post_card.dart';
+import 'package:fccu_societies_hub/features/search/widgets/global_search_bar.dart';
+import 'package:fccu_societies_hub/features/societies/widgets/society_card.dart';
+import 'package:fccu_societies_hub/features/societies/widgets/society_list_section.dart';
+import 'package:fccu_societies_hub/mock/mock_events.dart';
+import 'package:fccu_societies_hub/mock/mock_posts.dart';
+import 'package:fccu_societies_hub/mock/mock_societies.dart';
+
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => DefaultTabController(
-    length: 3,
+  State<SearchScreen> createState() => _SearchScreenState();
+}
 
-    child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Search'),
+class _SearchScreenState extends State<SearchScreen> {
+  final _controller = TextEditingController();
 
-        bottom: const TabBar(
-          tabs: [
-            Tab(text: 'Posts'),
-            Tab(text: 'Events'),
-            Tab(text: 'Societies'),
+  String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller.addListener(() => setState(() => _query = _controller.text.trim()));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
+  }
+
+  bool get _isSearching => _query.isNotEmpty;
+
+  @override
+  Widget build(BuildContext context) {
+    final lowerQuery = _query.toLowerCase();
+
+    final filteredPosts = mockPosts
+        .where(
+          (post) =>
+              post.content.toLowerCase().contains(lowerQuery) || post.societyName.toLowerCase().contains(lowerQuery),
+        )
+        .toList();
+
+    final filteredEvents = mockEvents
+        .where(
+          (event) =>
+              event.title.toLowerCase().contains(lowerQuery) ||
+              event.description.toLowerCase().contains(lowerQuery) ||
+              event.societyName.toLowerCase().contains(lowerQuery),
+        )
+        .toList();
+
+    final filteredSocieties = mockSocieties
+        .where(
+          (society) =>
+              society.name.toLowerCase().contains(lowerQuery) ||
+              (society.description?.toLowerCase().contains(lowerQuery) ?? false),
+        )
+        .toList();
+
+    final mySocieties = mockSocieties.where((society) => society.isMember).toList();
+
+    final followedSocieties = mockSocieties.where((society) => society.isFollowed).toList();
+
+    return DefaultTabController(
+      length: 3,
+
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0,
+
+          title: Padding(
+            padding: const .all(AppSpacing.s_16),
+
+            child: GlobalSearchBar(controller: _controller),
+          ),
+
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Posts'),
+              Tab(text: 'Events'),
+              Tab(text: 'Societies'),
+            ],
+          ),
+        ),
+
+        body: TabBarView(
+          children: [
+            ListView.separated(
+              padding: const .symmetric(vertical: AppSpacing.s_12),
+
+              itemCount: filteredPosts.length,
+
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
+
+              itemBuilder: (context, index) => PostCard(post: filteredPosts[index]),
+            ),
+
+            ListView.separated(
+              padding: const .all(AppSpacing.s_16),
+
+              itemCount: filteredEvents.length,
+
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
+
+              itemBuilder: (context, index) => EventCard(event: filteredEvents[index]),
+            ),
+
+            if (_isSearching)
+              ListView.separated(
+                padding: const .all(AppSpacing.s_16),
+
+                itemCount: filteredSocieties.length,
+
+                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
+
+                itemBuilder: (context, index) => SocietyCard(society: filteredSocieties[index]),
+              )
+            else
+              ListView(
+                padding: const .only(top: AppSpacing.s_16, bottom: AppSpacing.s_24),
+
+                children: [
+                  SocietyListSection(title: 'My Societies', societies: mySocieties),
+
+                  SocietyListSection(title: 'Followed', societies: followedSocieties),
+
+                  SocietyListSection(title: 'All Societies', societies: mockSocieties),
+                ],
+              ),
           ],
         ),
       ),
-
-      body: const TabBarView(
-        children: [
-          Center(child: Text('Search Posts')),
-          Center(child: Text('Search Events')),
-          Center(child: Text('Search Societies')),
-        ],
-      ),
-    ),
-  );
+    );
+  }
 }

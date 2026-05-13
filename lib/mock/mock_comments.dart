@@ -1,14 +1,22 @@
+import 'package:fccu_societies_hub/mock/mock_posts.dart';
 import 'package:fccu_societies_hub/models/comment.dart';
 
-List<Comment> mockComments({required String postId, int count = 10, String? id}) => List.generate(
-  count,
-  (i) => Comment(
-    id: id ?? 'comment_$i',
-    postId: postId,
-    userId: 'user_$i',
-    userName: 'Ali',
-    userAvatar: null,
-    content: 'This is a sample post #$i',
-    createdAt: DateTime.now().subtract(Duration(hours: i)),
-  ),
-);
+final mockComments =
+    mockPosts
+        .map(
+          (post) => List.generate(
+            5,
+            (i) => Comment(
+              id: '${post.id}_$i',
+              postId: post.id,
+              userId: '$i',
+              userName: 'User $i',
+              userAvatar: i % 2 == 0 ? 'https://placehold.co/600x600.jpg' : null,
+              content: 'Content of Comment ${post.id}.$i\n\nWith newlines. **bold**. _italic_.',
+              createdAt: .now().subtract(.new(hours: i * 12)),
+            ),
+          ),
+        )
+        .expand((i) => i)
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
