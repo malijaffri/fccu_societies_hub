@@ -5,7 +5,7 @@ import 'package:fccu_societies_hub/features/create_event/screens/create_event_sc
 import 'package:fccu_societies_hub/features/create_post/screens/create_post_screen.dart';
 import 'package:fccu_societies_hub/features/events/screens/events_screen.dart';
 import 'package:fccu_societies_hub/features/feed/screens/feed_screen.dart';
-import 'package:fccu_societies_hub/features/post/screens/post_details_screen.dart';
+import 'package:fccu_societies_hub/features/posts/screens/post_details_screen.dart';
 import 'package:fccu_societies_hub/features/search/screens/search_screen.dart';
 
 final appRouter = GoRouter(

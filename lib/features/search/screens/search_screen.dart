@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/core/widgets/empty_state.dart';
 import 'package:fccu_societies_hub/features/events/widgets/event_card.dart';
-import 'package:fccu_societies_hub/features/post/widgets/posts_list.dart';
+import 'package:fccu_societies_hub/features/posts/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/search/widgets/global_search_bar.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/society_card.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/society_list_section.dart';
@@ -92,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 filter: (post) =>
                     post.content.toLowerCase().contains(lowerQuery) ||
                     post.societyName.toLowerCase().contains(lowerQuery),
-                filterFailMsg: 'Your search did not match any results',
+                failMsg: 'Your search did not match any results',
               )
             else
               const EmptyState(icon: Icons.forum_outlined, title: 'Posts', subtitle: 'Begin typing to see results'),

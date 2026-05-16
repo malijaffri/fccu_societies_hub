@@ -5,35 +5,38 @@ import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/core/widgets/app_error.dart';
 import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/core/widgets/empty_state.dart';
-import 'package:fccu_societies_hub/features/feed/providers/feed_provider.dart';
-import 'package:fccu_societies_hub/features/post/widgets/post_card.dart';
+import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
+import 'package:fccu_societies_hub/features/posts/widgets/post_card.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
 class PostsList extends ConsumerWidget {
-  final bool Function(Post)? filter;
-  final String? filterFailMsg;
+  final FutureProvider<List<Post>> postsProviderActual;
 
-  const PostsList({super.key, this.filter, this.filterFailMsg});
+  final bool Function(Post)? filter;
+  final String? failMsg;
+
+  PostsList({super.key, FutureProvider<List<Post>>? postsProviderActual, this.filter, this.failMsg})
+    : postsProviderActual = postsProviderActual ?? postsProvider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postsAsync = ref.watch(feedProvider);
+    final postsAsync = ref.watch(postsProviderActual);
 
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(feedProvider);
+          ref.invalidate(postsProviderActual);
 
-          await ref.read(feedProvider.future);
+          await ref.read(postsProviderActual.future);
         },
 
         child: postsAsync.when(
           data: (posts) {
             if (posts.isEmpty) {
-              return const EmptyState(
+              return EmptyState(
                 icon: Icons.forum_outlined,
                 title: 'No posts yet',
-                subtitle: 'Posts from societies will appear here.',
+                subtitle: failMsg ?? 'Posts from societies will appear here.',
               );
             }
 
@@ -43,7 +46,7 @@ class PostsList extends ConsumerWidget {
               return EmptyState(
                 icon: Icons.forum_outlined,
                 title: 'No posts found',
-                subtitle: filterFailMsg != null ? filterFailMsg! : 'Posts from societies will appear here.',
+                subtitle: failMsg ?? 'Posts from societies will appear here.',
               );
             }
 
@@ -60,7 +63,7 @@ class PostsList extends ConsumerWidget {
 
           loading: () => const AppLoading(),
 
-          error: (error, _) => AppError(error: error, onRetry: () => ref.invalidate(feedProvider)),
+          error: (error, _) => AppError(error: error, onRetry: () => ref.invalidate(postsProviderActual)),
         ),
       ),
     );

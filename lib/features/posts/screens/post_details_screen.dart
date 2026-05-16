@@ -7,8 +7,8 @@ import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/features/comments/providers/comments_provider.dart';
 import 'package:fccu_societies_hub/features/comments/widgets/comment_composer.dart';
 import 'package:fccu_societies_hub/features/comments/widgets/comments_section.dart';
-import 'package:fccu_societies_hub/features/post/providers/post_provider.dart';
-import 'package:fccu_societies_hub/features/post/widgets/post_card.dart';
+import 'package:fccu_societies_hub/features/posts/providers/post_provider.dart';
+import 'package:fccu_societies_hub/features/posts/widgets/post_card.dart';
 
 class PostDetailsScreen extends ConsumerWidget {
   final String postId;

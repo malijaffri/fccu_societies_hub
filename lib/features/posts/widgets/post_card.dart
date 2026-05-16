@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
-import 'package:fccu_societies_hub/features/post/widgets/post_actions.dart';
-import 'package:fccu_societies_hub/features/post/widgets/post_header.dart';
-import 'package:fccu_societies_hub/features/post/widgets/post_media_grid.dart';
+import 'package:fccu_societies_hub/features/posts/widgets/post_actions.dart';
+import 'package:fccu_societies_hub/features/posts/widgets/post_header.dart';
+import 'package:fccu_societies_hub/features/posts/widgets/post_media_grid.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
 class PostCard extends StatelessWidget {

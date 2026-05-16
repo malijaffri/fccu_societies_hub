@@ -10,6 +10,6 @@ class MockFeedRepository implements FeedRepository {
   Future<List<Post>> fetchFeed() async {
     await Future.delayed(const .new(seconds: 1));
 
-    return mockPosts;
+    return mockPosts.where((post) => post.isFollowed).toList();
   }
 }
