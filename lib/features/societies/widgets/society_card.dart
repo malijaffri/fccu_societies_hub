@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/models/society.dart';
+import 'package:fccu_societies_hub/widgets/avatar.dart';
 
 class SocietyCard extends StatelessWidget {
   final Society society;
@@ -34,20 +35,14 @@ class SocietyCard extends StatelessWidget {
               crossAxisAlignment: .start,
 
               children: [
-                // TODO
-                CircleAvatar(
+                Avatar(
+                  avatarUrl: society.imageUrl,
+                  name: society.name,
                   radius: 26,
-
                   backgroundColor: colorScheme.primaryContainer,
-
-                  child: Text(
-                    society.name[0].toUpperCase(),
-
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: .w700,
-
-                      color: colorScheme.onPrimaryContainer,
-                    ),
+                  textStyle: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: .w700,
+                    color: colorScheme.onPrimaryContainer,
                   ),
                 ),
 

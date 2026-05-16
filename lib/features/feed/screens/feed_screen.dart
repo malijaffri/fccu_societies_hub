@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/features/post/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/profile/widgets/profile_menu_sheet.dart';
-import 'package:fccu_societies_hub/mock/mock_posts.dart';
 import 'package:fccu_societies_hub/widgets/avatar.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -35,9 +34,8 @@ class FeedScreen extends StatelessWidget {
 
       body: TabBarView(
         children: [
-          PostsList(posts: mockPosts),
-
-          PostsList(posts: mockPosts),
+          PostsList(filter: (post) => post.isFollowed, filterFailMsg: 'Follow societies to see their posts'),
+          const PostsList(),
         ],
       ),
     ),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/core/widgets/empty_state.dart';
 import 'package:fccu_societies_hub/features/events/widgets/event_card.dart';
-import 'package:fccu_societies_hub/features/post/widgets/post_card.dart';
+import 'package:fccu_societies_hub/features/post/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/search/widgets/global_search_bar.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/society_card.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/society_list_section.dart';
 import 'package:fccu_societies_hub/mock/mock_events.dart';
-import 'package:fccu_societies_hub/mock/mock_posts.dart';
 import 'package:fccu_societies_hub/mock/mock_societies.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -41,13 +41,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final lowerQuery = _query.toLowerCase();
-
-    final filteredPosts = mockPosts
-        .where(
-          (post) =>
-              post.content.toLowerCase().contains(lowerQuery) || post.societyName.toLowerCase().contains(lowerQuery),
-        )
-        .toList();
 
     final filteredEvents = mockEvents
         .where(
@@ -94,25 +87,32 @@ class _SearchScreenState extends State<SearchScreen> {
 
         body: TabBarView(
           children: [
-            ListView.separated(
-              padding: const .symmetric(vertical: AppSpacing.s_12),
+            if (_isSearching)
+              PostsList(
+                filter: (post) =>
+                    post.content.toLowerCase().contains(lowerQuery) ||
+                    post.societyName.toLowerCase().contains(lowerQuery),
+                filterFailMsg: 'Your search did not match any results',
+              )
+            else
+              const EmptyState(icon: Icons.forum_outlined, title: 'Posts', subtitle: 'Begin typing to see results'),
 
-              itemCount: filteredPosts.length,
+            if (_isSearching)
+              ListView.separated(
+                padding: const .all(AppSpacing.s_16),
 
-              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
+                itemCount: filteredEvents.length,
 
-              itemBuilder: (context, index) => PostCard(post: filteredPosts[index]),
-            ),
+                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
 
-            ListView.separated(
-              padding: const .all(AppSpacing.s_16),
-
-              itemCount: filteredEvents.length,
-
-              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
-
-              itemBuilder: (context, index) => EventCard(event: filteredEvents[index]),
-            ),
+                itemBuilder: (context, index) => EventCard(event: filteredEvents[index]),
+              )
+            else
+              const EmptyState(
+                icon: Icons.calendar_month_outlined,
+                title: 'Events',
+                subtitle: 'Begin typing to see results',
+              ),
 
             if (_isSearching)
               ListView.separated(

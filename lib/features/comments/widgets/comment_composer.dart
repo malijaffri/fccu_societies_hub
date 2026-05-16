@@ -25,7 +25,7 @@ class CommentComposer extends StatelessWidget {
         crossAxisAlignment: .end,
 
         children: [
-          Avatar(),
+          const Avatar(),
 
           const SizedBox(width: AppSpacing.s_12),
 

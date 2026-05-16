@@ -37,24 +37,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       return;
     }
 
-    final picker = ImagePicker();
-
-    final images = await picker.pickMultiImage(imageQuality: 85);
+    final images = await ImagePicker().pickMultiImage(imageQuality: 85);
 
     if (images.isEmpty) {
       return;
     }
 
-    final remainingSlots = 4 - _selectedImages.length;
+    final limitedImages = images.take(4 - _selectedImages.length);
 
-    final limitedImages = images.take(remainingSlots);
-
-    setState(() => _selectedImages.addAll(limitedImages.map((image) => File(image.path))));
+    setState(() => _selectedImages.addAll(limitedImages.map((image) => .new(image.path))));
   }
 
-  void _removeImage(File image) {
-    setState(() => _selectedImages.remove(image));
-  }
+  void _removeImage(File image) => setState(() => _selectedImages.remove(image));
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
@@ -73,7 +67,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     setState(() => _isSubmitting = true);
 
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const .new(seconds: 1));
 
     if (!mounted) {
       return;
@@ -82,80 +76,60 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     Navigator.pop(context);
   }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-  }
+  void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(message)));
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Create Post'),
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Post'),
+      actions: [
+        Padding(
+          padding: const .only(right: AppSpacing.s_8),
 
-        actions: [
-          Padding(
-            padding: const .only(right: AppSpacing.s_8),
+          child: TextButton(
+            onPressed: _isSubmitting ? null : _submit,
 
-            child: TextButton(
-              onPressed: _isSubmitting ? null : _submit,
-
-              child: _isSubmitting
-                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Post'),
-            ),
-          ),
-        ],
-      ),
-
-      resizeToAvoidBottomInset: true,
-
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const .all(AppSpacing.s_16),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: [
-              SocietySelector(
-                societies: mockSocieties,
-
-                value: _selectedSocietyId,
-
-                onChanged: (value) {
-                  setState(() => _selectedSocietyId = value);
-                },
-              ),
-
-              const SizedBox(height: AppSpacing.s_20),
-
-              ///
-              /// COMPOSER
-              ///
-              Text('What\'s happening?', style: theme.textTheme.titleMedium),
-
-              const SizedBox(height: AppSpacing.s_12),
-
-              PostComposerField(controller: _contentController),
-
-              const SizedBox(height: AppSpacing.s_20),
-
-              ///
-              /// MEDIA
-              ///
-              MediaPickerSection(
-                selectedImages: _selectedImages,
-
-                onAddImages: _pickImages,
-
-                onRemoveImage: _removeImage,
-              ),
-            ],
+            child: _isSubmitting
+                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Text('Post'),
           ),
         ),
+      ],
+    ),
+
+    resizeToAvoidBottomInset: true,
+
+    body: SafeArea(
+      child: SingleChildScrollView(
+        padding: const .all(AppSpacing.s_16),
+
+        child: Column(
+          crossAxisAlignment: .start,
+
+          children: [
+            SocietySelector(
+              societies: mockSocieties,
+
+              value: _selectedSocietyId,
+
+              onChanged: (value) => setState(() => _selectedSocietyId = value),
+            ),
+
+            const SizedBox(height: AppSpacing.s_20),
+
+            Text('What\'s happening?', style: Theme.of(context).textTheme.titleMedium),
+
+            const SizedBox(height: AppSpacing.s_12),
+
+            PostComposerField(controller: _contentController),
+
+            const SizedBox(height: AppSpacing.s_20),
+
+            MediaPickerSection(selectedImages: _selectedImages, onAddImages: _pickImages, onRemoveImage: _removeImage),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
 }

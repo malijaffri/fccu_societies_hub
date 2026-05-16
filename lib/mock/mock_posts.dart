@@ -11,6 +11,7 @@ final mockPosts =
               societyId: society.id,
               societyName: society.name,
               societyImage: i % 2 == 0 ? 'https://placehold.co/600x600.jpg' : null,
+              isFollowed: society.isFollowed,
               authorId: '$i',
               authorName: 'User $i',
               content: 'Content of Post ${society.id}.$i\n\nWith newlines. **bold**. _italic_.',

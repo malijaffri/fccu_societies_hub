@@ -6,6 +6,7 @@ class Post {
   final String societyId;
   final String societyName;
   final String? societyImage;
+  final bool isFollowed;
 
   final String authorId;
   final String authorName;
@@ -27,6 +28,7 @@ class Post {
     required this.societyId,
     required this.societyName,
     this.societyImage,
+    required this.isFollowed,
     required this.authorId,
     required this.authorName,
     required this.content,
