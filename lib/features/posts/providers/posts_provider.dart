@@ -1,5 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fccu_societies_hub/features/posts/providers/posts_repository_provider.dart';
+import 'package:fccu_societies_hub/features/posts/repositories/post_repository.dart';
+import 'package:fccu_societies_hub/models/post.dart';
 
-final postsProvider = FutureProvider((ref) async => ref.watch(postsRepositoryProvider).fetchPosts());
+final postsRepositoryProvider = Provider<PostRepository>((ref) => MockPostRepository());
+
+final postsProvider = FutureProvider<List<Post>>((ref) async => ref.watch(postsRepositoryProvider).fetchPosts());
+
+final postProvider = FutureProvider.family<Post, String>(
+  (ref, postId) async => ref.watch(postsRepositoryProvider).fetchPost(postId),
+);

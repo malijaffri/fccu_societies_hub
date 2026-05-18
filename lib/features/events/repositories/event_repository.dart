@@ -1,13 +1,13 @@
 import 'package:fccu_societies_hub/mock/mock_events.dart';
 import 'package:fccu_societies_hub/models/event.dart';
 
-abstract class EventsRepository {
+abstract class EventRepository {
   Future<List<Event>> fetchEvents();
 
   Future<Event> fetchEvent(String eventId);
 }
 
-class MockEventsRepository implements EventsRepository {
+class MockEventRepository implements EventRepository {
   @override
   Future<List<Event>> fetchEvents() async {
     await Future.delayed(const .new(seconds: 1));

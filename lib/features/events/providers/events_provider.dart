@@ -1,5 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fccu_societies_hub/features/events/providers/events_repository_provider.dart';
+import 'package:fccu_societies_hub/features/events/repositories/event_repository.dart';
+import 'package:fccu_societies_hub/models/event.dart';
 
-final eventsProvider = FutureProvider((ref) async => ref.watch(eventsRepositoryProvider).fetchEvents());
+final eventsRepositoryProvider = Provider<EventRepository>((ref) => MockEventRepository());
+
+final eventsProvider = FutureProvider<List<Event>>((ref) async => ref.watch(eventsRepositoryProvider).fetchEvents());
+
+final eventProvider = FutureProvider.family<Event, String>(
+  (ref, eventId) async => ref.watch(eventsRepositoryProvider).fetchEvent(eventId),
+);
