@@ -25,4 +25,50 @@ class Event {
     this.location,
     this.imageUrl,
   });
+
+  factory Event.fromMap(Map<String, dynamic> map) => Event(
+    id: map['id'],
+    societyId: map['societyId'],
+    societyName: map['societyName'],
+    title: map['title'],
+    description: map['description'],
+    start: map['start'],
+    end: map['end'],
+    location: map['location'],
+    imageUrl: map['imageUrl'],
+  );
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'societyId': societyId,
+    'societyName': societyName,
+    'title': title,
+    'description': description,
+    'start': start,
+    'end': end,
+    'location': location,
+    'imageUrl': imageUrl,
+  };
+
+  Event copyWith({
+    String? id,
+    String? societyId,
+    String? societyName,
+    String? title,
+    String? description,
+    DateTime? start,
+    DateTime? end,
+    String? location,
+    String? imageUrl,
+  }) => Event(
+    id: id ?? this.id,
+    societyId: societyId ?? this.societyId,
+    societyName: societyName ?? this.societyName,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    start: start ?? this.start,
+    end: end ?? this.end,
+    location: location ?? this.location,
+    imageUrl: imageUrl ?? this.imageUrl,
+  );
 }
