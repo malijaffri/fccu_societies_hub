@@ -5,6 +5,9 @@ abstract class SocietyRepository {
   Future<List<Society>> fetchSocieties();
 
   Future<Society> fetchSociety(String societyId);
+
+  // TODO
+  // Future<List<Society>> fetchMemberSocieties();
 }
 
 class MockSocietyRepository implements SocietyRepository {

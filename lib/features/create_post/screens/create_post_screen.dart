@@ -1,22 +1,25 @@
 import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/core/widgets/app_error.dart';
+import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/media_picker_section.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/post_composer_field.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/society_selector.dart';
-import 'package:fccu_societies_hub/mock/mock_societies.dart';
+import 'package:fccu_societies_hub/features/societies/providers/societies_provider.dart';
 
-class CreatePostScreen extends StatefulWidget {
+class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});
 
   @override
-  State<CreatePostScreen> createState() => _CreatePostScreenState();
+  ConsumerState<CreatePostScreen> createState() => _CreatePostScreenState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
+class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   final _contentController = TextEditingController();
 
   final List<File> _selectedImages = [];
@@ -79,57 +82,71 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(message)));
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Create Post'),
+  Widget build(BuildContext context) {
+    final societiesAsync = ref.watch(societiesProvider);
 
-      actions: [
-        Padding(
-          padding: const .only(right: AppSpacing.s_8),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Post'),
 
-          child: TextButton(
-            onPressed: _isSubmitting ? null : _submit,
+        actions: [
+          Padding(
+            padding: const .only(right: AppSpacing.s_8),
 
-            child: _isSubmitting
-                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Post'),
-          ),
-        ),
-      ],
-    ),
+            child: TextButton(
+              onPressed: _isSubmitting ? null : _submit,
 
-    resizeToAvoidBottomInset: true,
-
-    body: SafeArea(
-      child: SingleChildScrollView(
-        padding: const .all(AppSpacing.s_16),
-
-        child: Column(
-          crossAxisAlignment: .start,
-
-          children: [
-            SocietySelector(
-              societies: mockSocieties,
-
-              value: _selectedSocietyId,
-
-              onChanged: (value) => setState(() => _selectedSocietyId = value),
+              child: _isSubmitting
+                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Post'),
             ),
+          ),
+        ],
+      ),
 
-            const SizedBox(height: AppSpacing.s_20),
+      resizeToAvoidBottomInset: true,
 
-            Text('What\'s happening?', style: Theme.of(context).textTheme.titleMedium),
+      body: SafeArea(
+        child: societiesAsync.when(
+          data: (societies) => SingleChildScrollView(
+            padding: const .all(AppSpacing.s_16),
 
-            const SizedBox(height: AppSpacing.s_12),
+            child: Column(
+              crossAxisAlignment: .start,
 
-            PostComposerField(controller: _contentController),
+              children: [
+                SocietySelector(
+                  societies: societies.where((society) => society.isMember).toList(),
 
-            const SizedBox(height: AppSpacing.s_20),
+                  value: _selectedSocietyId,
 
-            MediaPickerSection(selectedImages: _selectedImages, onAddImages: _pickImages, onRemoveImage: _removeImage),
-          ],
+                  onChanged: (value) => setState(() => _selectedSocietyId = value),
+                ),
+
+                const SizedBox(height: AppSpacing.s_20),
+
+                Text('What\'s happening?', style: Theme.of(context).textTheme.titleMedium),
+
+                const SizedBox(height: AppSpacing.s_12),
+
+                PostComposerField(controller: _contentController),
+
+                const SizedBox(height: AppSpacing.s_20),
+
+                MediaPickerSection(
+                  selectedImages: _selectedImages,
+                  onAddImages: _pickImages,
+                  onRemoveImage: _removeImage,
+                ),
+              ],
+            ),
+          ),
+
+          loading: () => const AppLoading(),
+
+          error: (error, _) => AppError(error: error, onRetry: () => ref.invalidate(societiesProvider)),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

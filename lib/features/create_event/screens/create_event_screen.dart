@@ -1,21 +1,24 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/core/widgets/app_error.dart';
+import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/features/create_event/widgets/event_datetime_section.dart';
 import 'package:fccu_societies_hub/features/create_event/widgets/event_location_field.dart';
 import 'package:fccu_societies_hub/features/create_event/widgets/linked_post_toggle.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/post_composer_field.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/society_selector.dart';
-import 'package:fccu_societies_hub/mock/mock_societies.dart';
+import 'package:fccu_societies_hub/features/societies/providers/societies_provider.dart';
 
-class CreateEventScreen extends StatefulWidget {
+class CreateEventScreen extends ConsumerStatefulWidget {
   const CreateEventScreen({super.key});
 
   @override
-  State<CreateEventScreen> createState() => _CreateEventScreenState();
+  ConsumerState<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _CreateEventScreenState extends State<CreateEventScreen> {
+class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   final _titleController = TextEditingController();
 
   final _descriptionController = TextEditingController();
@@ -140,97 +143,107 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(message)));
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Create Event'),
+  Widget build(BuildContext context) {
+    final societiesAsync = ref.watch(societiesProvider);
 
-      actions: [
-        Padding(
-          padding: const .only(right: AppSpacing.s_8),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Event'),
 
-          child: TextButton(
-            onPressed: _isSubmitting ? null : _submit,
+        actions: [
+          Padding(
+            padding: const .only(right: AppSpacing.s_8),
 
-            child: _isSubmitting
-                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Create'),
+            child: TextButton(
+              onPressed: _isSubmitting ? null : _submit,
+
+              child: _isSubmitting
+                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Create'),
+            ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
 
-    body: SafeArea(
-      child: SingleChildScrollView(
-        padding: const .all(AppSpacing.s_16),
+      body: SafeArea(
+        child: societiesAsync.when(
+          data: (societies) => SingleChildScrollView(
+            padding: const .all(AppSpacing.s_16),
 
-        child: Column(
-          crossAxisAlignment: .start,
+            child: Column(
+              crossAxisAlignment: .start,
 
-          children: [
-            Text('Event Details', style: Theme.of(context).textTheme.titleLarge),
+              children: [
+                Text('Event Details', style: Theme.of(context).textTheme.titleLarge),
 
-            const SizedBox(height: AppSpacing.s_16),
+                const SizedBox(height: AppSpacing.s_16),
 
-            SocietySelector(
-              societies: mockSocieties,
+                SocietySelector(
+                  societies: societies.where((society) => society.isMember).toList(),
 
-              value: _selectedSocietyId,
+                  value: _selectedSocietyId,
 
-              onChanged: (value) => setState(() => _selectedSocietyId = value),
+                  onChanged: (value) => setState(() => _selectedSocietyId = value),
+                ),
+
+                const SizedBox(height: AppSpacing.s_16),
+
+                TextField(
+                  controller: _titleController,
+
+                  textCapitalization: .words,
+
+                  decoration: const .new(labelText: 'Event Title', hintText: 'Flutter Workshop 2026'),
+                ),
+
+                const SizedBox(height: AppSpacing.s_16),
+
+                TextField(
+                  controller: _descriptionController,
+
+                  minLines: 4,
+                  maxLines: null,
+
+                  textCapitalization: .sentences,
+
+                  decoration: const .new(labelText: 'Description', alignLabelWithHint: true),
+                ),
+
+                const SizedBox(height: AppSpacing.s_20),
+
+                EventDateTimeSection(
+                  startsAt: _startsAt,
+                  endsAt: _endsAt,
+
+                  onPickStart: _pickStartDateTime,
+
+                  onPickEnd: _pickEndDateTime,
+                ),
+
+                const SizedBox(height: AppSpacing.s_20),
+
+                EventLocationField(controller: _locationController),
+
+                const SizedBox(height: AppSpacing.s_20),
+
+                LinkedPostToggle(value: _alsoCreatePost, onChanged: (value) => setState(() => _alsoCreatePost = value)),
+
+                if (_alsoCreatePost) ...[
+                  const SizedBox(height: AppSpacing.s_16),
+
+                  PostComposerField(controller: _linkedPostController),
+                ],
+
+                const SizedBox(height: AppSpacing.s_24),
+              ],
             ),
+          ),
 
-            const SizedBox(height: AppSpacing.s_16),
+          loading: () => const AppLoading(),
 
-            TextField(
-              controller: _titleController,
-
-              textCapitalization: .words,
-
-              decoration: const .new(labelText: 'Event Title', hintText: 'Flutter Workshop 2026'),
-            ),
-
-            const SizedBox(height: AppSpacing.s_16),
-
-            TextField(
-              controller: _descriptionController,
-
-              minLines: 4,
-              maxLines: null,
-
-              textCapitalization: .sentences,
-
-              decoration: const .new(labelText: 'Description', alignLabelWithHint: true),
-            ),
-
-            const SizedBox(height: AppSpacing.s_20),
-
-            EventDateTimeSection(
-              startsAt: _startsAt,
-              endsAt: _endsAt,
-
-              onPickStart: _pickStartDateTime,
-
-              onPickEnd: _pickEndDateTime,
-            ),
-
-            const SizedBox(height: AppSpacing.s_20),
-
-            EventLocationField(controller: _locationController),
-
-            const SizedBox(height: AppSpacing.s_20),
-
-            LinkedPostToggle(value: _alsoCreatePost, onChanged: (value) => setState(() => _alsoCreatePost = value)),
-
-            if (_alsoCreatePost) ...[
-              const SizedBox(height: AppSpacing.s_16),
-
-              PostComposerField(controller: _linkedPostController),
-            ],
-
-            const SizedBox(height: AppSpacing.s_24),
-          ],
+          error: (error, _) => AppError(error: error, onRetry: () => ref.invalidate(societiesProvider)),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

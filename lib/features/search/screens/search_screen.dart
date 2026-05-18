@@ -1,22 +1,25 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/core/widgets/app_error.dart';
+import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/core/widgets/empty_state.dart';
 import 'package:fccu_societies_hub/features/events/widgets/events_list.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/search/widgets/global_search_bar.dart';
+import 'package:fccu_societies_hub/features/societies/providers/societies_provider.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/societies_list.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/society_list_section.dart';
-import 'package:fccu_societies_hub/mock/mock_societies.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _controller = TextEditingController();
 
   String _query = '';
@@ -39,11 +42,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final societiesAsync = ref.watch(societiesProvider);
+
     final lowerQuery = _query.toLowerCase();
-
-    final mySocieties = mockSocieties.where((society) => society.isMember).toList();
-
-    final followedSocieties = mockSocieties.where((society) => society.isFollowed).toList();
 
     return DefaultTabController(
       length: 3,
@@ -95,25 +96,39 @@ class _SearchScreenState extends State<SearchScreen> {
                 subtitle: 'Begin typing to see results',
               ),
 
-            if (_isSearching)
-              SocietiesList(
-                userFilter: (society) =>
-                    society.name.toLowerCase().contains(lowerQuery) ||
-                    (society.description?.toLowerCase().contains(lowerQuery) ?? false),
-                failMsg: 'Your search did not match any results',
-              )
-            else
-              ListView(
-                padding: const .only(top: AppSpacing.s_16, bottom: AppSpacing.s_24),
+            societiesAsync.when(
+              data: (societies) {
+                if (_isSearching) {
+                  return SocietiesList(
+                    userFilter: (society) =>
+                        society.name.toLowerCase().contains(lowerQuery) ||
+                        (society.description?.toLowerCase().contains(lowerQuery) ?? false),
+                    failMsg: 'Your search did not match any results',
+                  );
+                }
 
-                children: [
-                  SocietyListSection(title: 'My Societies', societies: mySocieties),
+                // TODO
+                final mySocieties = societies.where((society) => society.isMember).toList();
 
-                  SocietyListSection(title: 'Followed', societies: followedSocieties),
+                final followedSocieties = societies.where((society) => society.isFollowed).toList();
 
-                  SocietyListSection(title: 'All Societies', societies: mockSocieties),
-                ],
-              ),
+                return ListView(
+                  padding: const .only(top: AppSpacing.s_16, bottom: AppSpacing.s_24),
+
+                  children: [
+                    SocietyListSection(title: 'My Societies', societies: mySocieties),
+
+                    SocietyListSection(title: 'Followed', societies: followedSocieties),
+
+                    SocietyListSection(title: 'All Societies', societies: societies),
+                  ],
+                );
+              },
+
+              loading: () => const AppLoading(),
+
+              error: (error, _) => AppError(error: error, onRetry: () => ref.invalidate(societiesProvider)),
+            ),
           ],
         ),
       ),
