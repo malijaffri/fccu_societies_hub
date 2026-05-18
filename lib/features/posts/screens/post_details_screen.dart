@@ -54,7 +54,10 @@ class PostDetailsScreen extends ConsumerWidget {
                 padding: const .only(top: AppSpacing.s_8, bottom: AppSpacing.s_12),
 
                 children: [
-                  PostCard(post: post, compact: false),
+                  Padding(
+                    padding: const .symmetric(horizontal: AppSpacing.s_12, vertical: AppSpacing.s_8),
+                    child: PostCard(post: post, compact: false),
+                  ),
 
                   Padding(
                     padding: const .fromLTRB(AppSpacing.s_16, AppSpacing.s_12, AppSpacing.s_16, AppSpacing.s_8),

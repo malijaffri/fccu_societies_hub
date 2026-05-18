@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/core/widgets/empty_state.dart';
-import 'package:fccu_societies_hub/features/events/widgets/event_card.dart';
+import 'package:fccu_societies_hub/features/events/widgets/events_list.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/search/widgets/global_search_bar.dart';
-import 'package:fccu_societies_hub/features/societies/widgets/society_card.dart';
+import 'package:fccu_societies_hub/features/societies/widgets/societies_list.dart';
 import 'package:fccu_societies_hub/features/societies/widgets/society_list_section.dart';
-import 'package:fccu_societies_hub/mock/mock_events.dart';
 import 'package:fccu_societies_hub/mock/mock_societies.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -42,23 +41,6 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final lowerQuery = _query.toLowerCase();
 
-    final filteredEvents = mockEvents
-        .where(
-          (event) =>
-              event.title.toLowerCase().contains(lowerQuery) ||
-              event.description.toLowerCase().contains(lowerQuery) ||
-              event.societyName.toLowerCase().contains(lowerQuery),
-        )
-        .toList();
-
-    final filteredSocieties = mockSocieties
-        .where(
-          (society) =>
-              society.name.toLowerCase().contains(lowerQuery) ||
-              (society.description?.toLowerCase().contains(lowerQuery) ?? false),
-        )
-        .toList();
-
     final mySocieties = mockSocieties.where((society) => society.isMember).toList();
 
     final followedSocieties = mockSocieties.where((society) => society.isFollowed).toList();
@@ -89,7 +71,7 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             if (_isSearching)
               PostsList(
-                filter: (post) =>
+                userFilter: (post) =>
                     post.content.toLowerCase().contains(lowerQuery) ||
                     post.societyName.toLowerCase().contains(lowerQuery),
                 failMsg: 'Your search did not match any results',
@@ -98,14 +80,13 @@ class _SearchScreenState extends State<SearchScreen> {
               const EmptyState(icon: Icons.forum_outlined, title: 'Posts', subtitle: 'Begin typing to see results'),
 
             if (_isSearching)
-              ListView.separated(
-                padding: const .all(AppSpacing.s_16),
-
-                itemCount: filteredEvents.length,
-
-                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
-
-                itemBuilder: (context, index) => EventCard(event: filteredEvents[index]),
+              EventsList(
+                userFilter: (event) =>
+                    event.title.toLowerCase().contains(lowerQuery) ||
+                    event.description.toLowerCase().contains(lowerQuery) ||
+                    event.societyName.toLowerCase().contains(lowerQuery) ||
+                    (event.location?.toLowerCase().contains(lowerQuery) ?? false),
+                failMsg: 'Your search did not match any results',
               )
             else
               const EmptyState(
@@ -115,14 +96,11 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
 
             if (_isSearching)
-              ListView.separated(
-                padding: const .all(AppSpacing.s_16),
-
-                itemCount: filteredSocieties.length,
-
-                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_12),
-
-                itemBuilder: (context, index) => SocietyCard(society: filteredSocieties[index]),
+              SocietiesList(
+                userFilter: (society) =>
+                    society.name.toLowerCase().contains(lowerQuery) ||
+                    (society.description?.toLowerCase().contains(lowerQuery) ?? false),
+                failMsg: 'Your search did not match any results',
               )
             else
               ListView(

@@ -8,7 +8,9 @@ import 'package:fccu_societies_hub/widgets/avatar.dart';
 class SocietyCard extends StatelessWidget {
   final Society society;
 
-  const SocietyCard({super.key, required this.society});
+  final bool compact;
+
+  const SocietyCard({super.key, required this.society, this.compact = true});
 
   @override
   Widget build(BuildContext context) {
@@ -55,15 +57,14 @@ class SocietyCard extends StatelessWidget {
                     children: [
                       Text(society.name, style: theme.textTheme.titleMedium?.copyWith(fontWeight: .w700)),
 
-                      if (society.description != null) ...[
+                      if (!compact && society.description != null) ...[
                         const SizedBox(height: AppSpacing.s_4),
 
                         Text(
                           society.description!,
-
-                          maxLines: 2,
-                          overflow: .ellipsis,
-
+                          // TODO
+                          // maxLines: 2,
+                          // overflow: .ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
                       ],
@@ -72,7 +73,6 @@ class SocietyCard extends StatelessWidget {
 
                       Text(
                         '${society.memberCount} members',
-
                         style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                       ),
                     ],

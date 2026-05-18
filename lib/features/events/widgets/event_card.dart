@@ -8,7 +8,9 @@ import 'package:fccu_societies_hub/models/event.dart';
 class EventCard extends StatelessWidget {
   final Event event;
 
-  const EventCard({super.key, required this.event});
+  final bool compact;
+
+  const EventCard({super.key, required this.event, this.compact = true});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class EventCard extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.s_8),
 
-              Text(event.description, maxLines: 3, overflow: .ellipsis),
+              Text(event.description, maxLines: compact ? 3 : null, overflow: .ellipsis),
 
               const SizedBox(height: AppSpacing.s_16),
 
