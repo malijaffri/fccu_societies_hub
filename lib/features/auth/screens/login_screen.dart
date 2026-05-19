@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:fccu_societies_hub/core/router/app_router.dart';
@@ -47,6 +48,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref
           .read(authRepositoryProvider)
           .signIn(email: _emailController.text.trim(), password: _passwordController.text);
+
+      TextInput.finishAutofillContext();
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.pop(context);
     } catch (error) {
       if (!mounted) {
         return;
@@ -65,6 +74,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(),
+
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -76,86 +87,90 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Form(
                 key: _formKey,
 
-                child: Column(
-                  crossAxisAlignment: .stretch,
+                child: AutofillGroup(
+                  child: Column(
+                    crossAxisAlignment: .stretch,
 
-                  children: [
-                    Text(
-                      'FCCU Societies Hub',
+                    children: [
+                      Text(
+                        'FCCU Societies Hub',
 
-                      textAlign: .center,
+                        textAlign: .center,
 
-                      style: theme.textTheme.headlineMedium?.copyWith(fontWeight: .w700),
-                    ),
+                        style: theme.textTheme.headlineMedium?.copyWith(fontWeight: .w700),
+                      ),
 
-                    const SizedBox(height: AppSpacing.s_8),
+                      const SizedBox(height: AppSpacing.s_8),
 
-                    Text(
-                      'Sign in to continue',
+                      Text(
+                        'Sign in to continue',
 
-                      textAlign: .center,
+                        textAlign: .center,
 
-                      style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                    ),
+                        style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      ),
 
-                    const SizedBox(height: AppSpacing.s_32),
+                      const SizedBox(height: AppSpacing.s_32),
 
-                    TextFormField(
-                      controller: _emailController,
+                      TextFormField(
+                        controller: _emailController,
 
-                      keyboardType: .emailAddress,
+                        keyboardType: .emailAddress,
 
-                      autofillHints: const [AutofillHints.email],
+                        autofillHints: const [AutofillHints.email],
 
-                      decoration: const .new(labelText: 'Email'),
+                        decoration: const .new(labelText: 'Email'),
 
-                      validator: emailValidator(),
-                    ),
+                        validator: emailValidator(),
+                      ),
 
-                    const SizedBox(height: AppSpacing.s_16),
+                      const SizedBox(height: AppSpacing.s_16),
 
-                    TextFormField(
-                      controller: _passwordController,
+                      TextFormField(
+                        controller: _passwordController,
 
-                      obscureText: _obscurePassword,
+                        obscureText: _obscurePassword,
 
-                      autofillHints: const [AutofillHints.password],
+                        autofillHints: const [AutofillHints.password],
 
-                      decoration: .new(
-                        labelText: 'Password',
+                        decoration: .new(
+                          labelText: 'Password',
 
-                        suffixIcon: IconButton(
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          suffixIcon: IconButton(
+                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
 
-                          icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                            icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                          ),
+                        ),
+
+                        onEditingComplete: () => TextInput.finishAutofillContext(),
+
+                        validator: passwordValidator(),
+                      ),
+
+                      const SizedBox(height: AppSpacing.s_24),
+
+                      FilledButton(
+                        onPressed: _isLoading ? null : _login,
+
+                        child: Padding(
+                          padding: const .symmetric(vertical: AppSpacing.s_12),
+
+                          child: _isLoading
+                              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                              : const Text('Login'),
                         ),
                       ),
 
-                      validator: passwordValidator(),
-                    ),
+                      const SizedBox(height: AppSpacing.s_20),
 
-                    const SizedBox(height: AppSpacing.s_24),
+                      TextButton(
+                        onPressed: () => context.replace(AppRoutes.register),
 
-                    FilledButton(
-                      onPressed: _isLoading ? null : _login,
-
-                      child: Padding(
-                        padding: const .symmetric(vertical: AppSpacing.s_12),
-
-                        child: _isLoading
-                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                            : const Text('Login'),
+                        child: const Text('Create new account'),
                       ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.s_20),
-
-                    TextButton(
-                      onPressed: () => context.push(AppRoutes.register),
-
-                      child: const Text('Create an account'),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

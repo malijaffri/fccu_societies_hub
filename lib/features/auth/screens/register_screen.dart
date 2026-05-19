@@ -1,10 +1,13 @@
-import 'package:fccu_societies_hub/features/auth/utils/auth_validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/features/auth/providers/auth_repository_provider.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_error_message.dart';
+import 'package:fccu_societies_hub/features/auth/utils/auth_validators.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -46,6 +49,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           .read(authRepositoryProvider)
           .register(email: _emailController.text.trim(), password: _passwordController.text);
 
+      TextInput.finishAutofillContext();
+
       if (!mounted) {
         return;
       }
@@ -79,64 +84,80 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Form(
               key: _formKey,
 
-              child: Column(
-                crossAxisAlignment: .stretch,
+              child: AutofillGroup(
+                child: Column(
+                  crossAxisAlignment: .stretch,
 
-                children: [
-                  Text(
-                    'Create Account',
+                  children: [
+                    Text(
+                      'Create Account',
 
-                    textAlign: .center,
+                      textAlign: .center,
 
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: .w700),
-                  ),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: .w700),
+                    ),
 
-                  const SizedBox(height: AppSpacing.s_32),
+                    const SizedBox(height: AppSpacing.s_32),
 
-                  TextFormField(
-                    controller: _emailController,
+                    TextFormField(
+                      controller: _emailController,
 
-                    keyboardType: .emailAddress,
+                      keyboardType: .emailAddress,
 
-                    decoration: const .new(labelText: 'Email'),
+                      autofillHints: const [AutofillHints.email],
 
-                    validator: emailValidator(checkFormat: true),
-                  ),
+                      decoration: const .new(labelText: 'Email'),
 
-                  const SizedBox(height: AppSpacing.s_16),
+                      validator: emailValidator(checkFormat: true),
+                    ),
 
-                  TextFormField(
-                    controller: _passwordController,
+                    const SizedBox(height: AppSpacing.s_16),
 
-                    obscureText: _obscurePassword,
+                    TextFormField(
+                      controller: _passwordController,
 
-                    decoration: .new(
-                      labelText: 'Password',
+                      obscureText: _obscurePassword,
 
-                      suffixIcon: IconButton(
-                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      autofillHints: const [AutofillHints.password],
 
-                        icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      decoration: .new(
+                        labelText: 'Password',
+
+                        suffixIcon: IconButton(
+                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+
+                          icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                        ),
+                      ),
+
+                      onEditingComplete: () => TextInput.finishAutofillContext(),
+
+                      validator: passwordValidator(checkFormat: true),
+                    ),
+
+                    const SizedBox(height: AppSpacing.s_24),
+
+                    FilledButton(
+                      onPressed: _isLoading ? null : _register,
+
+                      child: Padding(
+                        padding: const .symmetric(vertical: AppSpacing.s_12),
+
+                        child: _isLoading
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                            : const Text('Register'),
                       ),
                     ),
 
-                    validator: passwordValidator(checkFormat: true),
-                  ),
+                    const SizedBox(height: AppSpacing.s_20),
 
-                  const SizedBox(height: AppSpacing.s_24),
+                    TextButton(
+                      onPressed: () => context.replace(AppRoutes.login),
 
-                  FilledButton(
-                    onPressed: _isLoading ? null : _register,
-
-                    child: Padding(
-                      padding: const .symmetric(vertical: AppSpacing.s_12),
-
-                      child: _isLoading
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Text('Register'),
+                      child: const Text('Use existing account'),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
