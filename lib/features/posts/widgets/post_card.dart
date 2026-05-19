@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/post_actions.dart';
@@ -34,7 +35,7 @@ class PostCard extends StatelessWidget {
         ),
         child: InkWell(
           borderRadius: .circular(AppRadius.r_16),
-          onTap: compact ? () => context.push('/post/${post.id}') : null,
+          onTap: compact ? () => context.push(AppRoutes.post.resolve({'id': post.id})) : null,
           child: Padding(
             padding: const .all(AppSpacing.s_16),
             child: Column(
@@ -48,7 +49,7 @@ class PostCard extends StatelessWidget {
                   post.content,
                   maxLines: compact ? 3 : null,
                   // overflow: .ellipsis, // TODO
-                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5),
+                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5, overflow: .ellipsis),
                 ),
 
                 if (post.media.isNotEmpty) ...[

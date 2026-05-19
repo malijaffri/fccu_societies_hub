@@ -62,7 +62,7 @@ class SocietyCard extends StatelessWidget {
 
                         Text(
                           society.description!,
-                          // TODO
+                          // TODO: needed?
                           // maxLines: 2,
                           // overflow: .ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),

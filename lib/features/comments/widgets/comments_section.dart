@@ -34,7 +34,10 @@ class CommentsSection extends ConsumerWidget {
       return Column(children: comments.map((comment) => CommentTile(comment: comment)).toList());
     },
 
-    loading: () => const Padding(padding: .symmetric(vertical: 32), child: AppLoading()),
+    loading: () => const Padding(
+      padding: .symmetric(vertical: AppSpacing.s_32),
+      child: AppLoading(),
+    ),
 
     error: (error, _) => Padding(
       padding: const .all(AppSpacing.s_16),

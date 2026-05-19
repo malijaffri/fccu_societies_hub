@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:fccu_societies_hub/core/router/app_router.dart';
+
 class AppScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
@@ -15,13 +17,13 @@ class AppScaffold extends StatelessWidget {
 
       floatingActionButton: switch (currentIndex) {
         0 => FloatingActionButton.extended(
-          onPressed: () => context.push('/create-post'),
+          onPressed: () => context.push(AppRoutes.createPost),
           icon: const Icon(Icons.edit_rounded),
           label: const Text('Post'),
         ),
 
         2 => FloatingActionButton.extended(
-          onPressed: () => context.push('/create-event'),
+          onPressed: () => context.push(AppRoutes.createEvent),
           icon: const Icon(Icons.event_rounded),
           label: const Text('Event'),
         ),

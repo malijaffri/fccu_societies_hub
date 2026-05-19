@@ -107,7 +107,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   );
                 }
 
-                // TODO
+                // TODO: memberSocietiesProvider
                 final mySocieties = societies.where((society) => society.isMember).toList();
 
                 final followedSocieties = societies.where((society) => society.isFollowed).toList();
