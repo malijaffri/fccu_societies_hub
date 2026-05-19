@@ -7,8 +7,10 @@ import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/features/comments/providers/comments_provider.dart';
 import 'package:fccu_societies_hub/features/comments/widgets/comment_composer.dart';
 import 'package:fccu_societies_hub/features/comments/widgets/comments_section.dart';
+import 'package:fccu_societies_hub/features/comments/widgets/guest_comment_prompt.dart';
 import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/post_card.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_permissions_provider.dart';
 
 class PostDetailsScreen extends ConsumerWidget {
   final String postId;
@@ -24,6 +26,8 @@ class PostDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final canComment = ref.watch(canCommentProvider);
+
     final postAsync = ref.watch(postProvider(postId));
     final commentsAsync = ref.watch(commentsProvider(postId));
 
@@ -70,7 +74,7 @@ class PostDetailsScreen extends ConsumerWidget {
               ),
             ),
 
-            const SafeArea(top: false, child: CommentComposer()),
+            SafeArea(top: false, child: canComment ? const CommentComposer() : const GuestCommentPrompt()),
           ],
         ),
       ),

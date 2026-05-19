@@ -148,6 +148,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             : const Text('Register'),
                       ),
                     ),
+
+                    const SizedBox(height: AppSpacing.s_20),
+
+                    TextButton(
+                      onPressed: () => context.replace(AppRoutes.login),
+
+                      child: const Text('Use existing account'),
+                    ),
                   ],
                 ),
               ),

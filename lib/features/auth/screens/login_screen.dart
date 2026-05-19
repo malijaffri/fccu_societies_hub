@@ -70,105 +70,99 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(),
 
-    return Scaffold(
-      appBar: AppBar(),
+    body: SafeArea(
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const .all(AppSpacing.s_24),
 
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const .all(AppSpacing.s_24),
+          child: ConstrainedBox(
+            constraints: const .new(maxWidth: 420),
 
-            child: ConstrainedBox(
-              constraints: const .new(maxWidth: 420),
+            child: Form(
+              key: _formKey,
 
-              child: Form(
-                key: _formKey,
+              child: AutofillGroup(
+                child: Column(
+                  crossAxisAlignment: .stretch,
 
-                child: AutofillGroup(
-                  child: Column(
-                    crossAxisAlignment: .stretch,
+                  children: [
+                    Text(
+                      'Sign In',
 
-                    children: [
-                      Text(
-                        'FCCU Societies Hub',
+                      textAlign: .center,
 
-                        textAlign: .center,
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: .w700),
+                    ),
 
-                        style: theme.textTheme.headlineMedium?.copyWith(fontWeight: .w700),
-                      ),
+                    const SizedBox(height: AppSpacing.s_32),
 
-                      const SizedBox(height: AppSpacing.s_8),
+                    TextFormField(
+                      controller: _emailController,
 
-                      Text(
-                        'Sign in to continue',
+                      keyboardType: .emailAddress,
 
-                        textAlign: .center,
+                      autofillHints: const [AutofillHints.email],
 
-                        style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      ),
+                      decoration: const .new(labelText: 'Email'),
 
-                      const SizedBox(height: AppSpacing.s_32),
+                      validator: emailValidator(),
+                    ),
 
-                      TextFormField(
-                        controller: _emailController,
+                    const SizedBox(height: AppSpacing.s_16),
 
-                        keyboardType: .emailAddress,
+                    TextFormField(
+                      controller: _passwordController,
 
-                        autofillHints: const [AutofillHints.email],
+                      obscureText: _obscurePassword,
 
-                        decoration: const .new(labelText: 'Email'),
+                      autofillHints: const [AutofillHints.password],
 
-                        validator: emailValidator(),
-                      ),
+                      decoration: .new(
+                        labelText: 'Password',
 
-                      const SizedBox(height: AppSpacing.s_16),
+                        suffixIcon: IconButton(
+                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
 
-                      TextFormField(
-                        controller: _passwordController,
-
-                        obscureText: _obscurePassword,
-
-                        autofillHints: const [AutofillHints.password],
-
-                        decoration: .new(
-                          labelText: 'Password',
-
-                          suffixIcon: IconButton(
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-
-                            icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                          ),
-                        ),
-
-                        onEditingComplete: () => TextInput.finishAutofillContext(),
-
-                        validator: passwordValidator(),
-                      ),
-
-                      const SizedBox(height: AppSpacing.s_24),
-
-                      FilledButton(
-                        onPressed: _isLoading ? null : _login,
-
-                        child: Padding(
-                          padding: const .symmetric(vertical: AppSpacing.s_12),
-
-                          child: _isLoading
-                              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                              : const Text('Login'),
+                          icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
                         ),
                       ),
-                    ],
-                  ),
+
+                      onEditingComplete: () => TextInput.finishAutofillContext(),
+
+                      validator: passwordValidator(),
+                    ),
+
+                    const SizedBox(height: AppSpacing.s_24),
+
+                    FilledButton(
+                      onPressed: _isLoading ? null : _login,
+
+                      child: Padding(
+                        padding: const .symmetric(vertical: AppSpacing.s_12),
+
+                        child: _isLoading
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                            : const Text('Login'),
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.s_20),
+
+                    TextButton(
+                      onPressed: () => context.replace(AppRoutes.register),
+
+                      child: const Text('Create an account'),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }

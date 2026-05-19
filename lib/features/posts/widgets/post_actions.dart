@@ -1,11 +1,15 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/core/utils/number_formatter.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_permissions_provider.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
-class PostActions extends StatelessWidget {
+class PostActions extends ConsumerWidget {
   final Post post;
 
   final VoidCallback? onLike;
@@ -15,7 +19,9 @@ class PostActions extends StatelessWidget {
   const PostActions({super.key, required this.post, this.onLike, this.onComment, this.onShare});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final canReact = ref.watch(canReactProvider);
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -25,7 +31,7 @@ class PostActions extends StatelessWidget {
           icon: post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
           color: post.isLiked ? Colors.red : colorScheme.onSurfaceVariant,
           label: formatNumber(post.likeCount),
-          onTap: onLike,
+          onTap: canReact ? onLike : () => context.push(AppRoutes.register),
         ),
 
         const SizedBox(width: AppSpacing.s_20),
@@ -34,7 +40,7 @@ class PostActions extends StatelessWidget {
           icon: Icons.mode_comment_outlined,
           color: colorScheme.onSurfaceVariant,
           label: formatNumber(post.commentCount),
-          onTap: onComment,
+          onTap: canReact ? onComment : () => context.push(AppRoutes.register),
         ),
 
         const SizedBox(width: AppSpacing.s_20),
