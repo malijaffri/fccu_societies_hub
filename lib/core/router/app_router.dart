@@ -70,11 +70,10 @@ final appRouter = GoRouter(
   redirect: (context, state) {
     final loggedIn = FirebaseAuth.instance.currentUser != null;
 
-    final isAuthRoute = state.matchedLocation == AppRoutes.login || state.matchedLocation == AppRoutes.register;
+    final isAuthRoute = const [AppRoutes.welcome, AppRoutes.login, AppRoutes.register].contains(state.matchedLocation);
 
     if (!loggedIn && !isAuthRoute) {
-      // return AppRoutes.welcome; // TODO
-      return AppRoutes.login;
+      return AppRoutes.welcome;
     }
 
     if (loggedIn && isAuthRoute) {

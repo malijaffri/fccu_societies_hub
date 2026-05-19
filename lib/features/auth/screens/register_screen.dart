@@ -55,7 +55,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         return;
       }
 
-      Navigator.pop(context);
+      context.go(AppRoutes.homeFeed);
     } catch (error) {
       if (!mounted) {
         return;
@@ -147,14 +147,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                             : const Text('Register'),
                       ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.s_20),
-
-                    TextButton(
-                      onPressed: () => context.replace(AppRoutes.login),
-
-                      child: const Text('Use existing account'),
                     ),
                   ],
                 ),

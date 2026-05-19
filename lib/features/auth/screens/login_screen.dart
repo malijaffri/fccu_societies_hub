@@ -55,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         return;
       }
 
-      Navigator.pop(context);
+      context.go(AppRoutes.homeFeed);
     } catch (error) {
       if (!mounted) {
         return;
@@ -160,14 +160,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                               : const Text('Login'),
                         ),
-                      ),
-
-                      const SizedBox(height: AppSpacing.s_20),
-
-                      TextButton(
-                        onPressed: () => context.replace(AppRoutes.register),
-
-                        child: const Text('Create new account'),
                       ),
                     ],
                   ),
