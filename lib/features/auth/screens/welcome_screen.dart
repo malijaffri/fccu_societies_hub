@@ -1,14 +1,16 @@
-import 'package:fccu_societies_hub/core/router/app_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_repository_provider.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -80,8 +82,18 @@ class WelcomeScreen extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.s_24),
 
-                  // TODO: guest access
-                  TextButton(onPressed: () => context.go(AppRoutes.homeFeed), child: const Text('Continue as Guest')),
+                  TextButton(
+                    onPressed: () async {
+                      await ref.read(sessionRepositoryProvider).setGuestMode();
+
+                      if (!context.mounted) {
+                        return;
+                      }
+
+                      context.go(AppRoutes.homeFeed);
+                    },
+                    child: const Text('Continue as Guest'),
+                  ),
                 ],
               ),
             ),

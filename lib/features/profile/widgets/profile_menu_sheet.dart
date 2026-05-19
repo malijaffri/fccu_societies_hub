@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/features/auth/providers/auth_repository_provider.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_repository_provider.dart';
 
 class ProfileMenuSheet extends ConsumerWidget {
   const ProfileMenuSheet({super.key});
@@ -48,7 +49,10 @@ class ProfileMenuSheet extends ConsumerWidget {
             onTap: () async {
               Navigator.pop(context);
 
-              await ref.read(authRepositoryProvider).signOut();
+              await Future.wait([
+                ref.read(sessionRepositoryProvider).clearGuestMode(),
+                ref.read(authRepositoryProvider).signOut(),
+              ]);
             },
           ),
         ],
