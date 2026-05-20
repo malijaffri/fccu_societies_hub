@@ -1,4 +1,6 @@
-class Comment {
+import 'package:equatable/equatable.dart';
+
+class Comment extends Equatable {
   final String id;
 
   final String postId;
@@ -58,4 +60,7 @@ class Comment {
     content: content ?? this.content,
     createdAt: createdAt ?? this.createdAt,
   );
+
+  @override
+  List<Object?> get props => [id];
 }

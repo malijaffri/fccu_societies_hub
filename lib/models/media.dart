@@ -1,4 +1,6 @@
-class Media {
+import 'package:equatable/equatable.dart';
+
+class Media extends Equatable {
   final String url;
   final MediaType type;
 
@@ -9,6 +11,9 @@ class Media {
   Map<String, dynamic> toMap() => {'url': url, 'type': type};
 
   Media copyWith({String? url, MediaType? type}) => Media(url: url ?? this.url, type: type ?? this.type);
+
+  @override
+  List<Object?> get props => [url];
 }
 
 enum MediaType {

@@ -1,4 +1,6 @@
-class Event {
+import 'package:equatable/equatable.dart';
+
+class Event extends Equatable {
   final String id;
 
   final String societyId;
@@ -71,4 +73,7 @@ class Event {
     location: location ?? this.location,
     imageUrl: imageUrl ?? this.imageUrl,
   );
+
+  @override
+  List<Object?> get props => [id];
 }

@@ -1,4 +1,6 @@
-class Society {
+import 'package:equatable/equatable.dart';
+
+class Society extends Equatable {
   final String id;
 
   final String name;
@@ -62,4 +64,7 @@ class Society {
     isFollowed: isFollowed ?? this.isFollowed,
     isMember: isMember ?? this.isMember,
   );
+
+  @override
+  List<Object?> get props => [id];
 }

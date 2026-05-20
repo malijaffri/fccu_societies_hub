@@ -1,6 +1,8 @@
-import 'media.dart';
+import 'package:equatable/equatable.dart';
 
-class Post {
+import 'package:fccu_societies_hub/models/media.dart';
+
+class Post extends Equatable {
   final String id;
 
   final String societyId;
@@ -105,4 +107,7 @@ class Post {
     createdAt: createdAt ?? this.createdAt,
     eventId: eventId ?? this.eventId,
   );
+
+  @override
+  List<Object?> get props => [id];
 }
