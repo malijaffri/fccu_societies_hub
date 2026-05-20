@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
-import 'package:fccu_societies_hub/features/feed/providers/feed_provider.dart';
+import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/posts_list.dart';
 import 'package:fccu_societies_hub/features/profile/widgets/profile_menu_sheet.dart';
 import 'package:fccu_societies_hub/widgets/avatar.dart';

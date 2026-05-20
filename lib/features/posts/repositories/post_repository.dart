@@ -1,24 +1,15 @@
-import 'package:fccu_societies_hub/mock/mock_posts.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
 abstract class PostRepository {
   Future<List<Post>> fetchPosts();
 
-  Future<Post> fetchPost(String postId);
-}
+  Future<List<Post>> fetchFeed();
 
-class MockPostRepository implements PostRepository {
-  @override
-  Future<List<Post>> fetchPosts() async {
-    await Future.delayed(const .new(seconds: 1));
+  Future<Post> getPost(String postId);
 
-    return mockPosts;
-  }
+  Future<void> createPost(Post post);
 
-  @override
-  Future<Post> fetchPost(String postId) async {
-    await Future.delayed(const .new(seconds: 1));
+  Future<void> updatePost(Post post);
 
-    return mockPosts.firstWhere((post) => post.id == postId);
-  }
+  Future<void> deletePost(String postId);
 }

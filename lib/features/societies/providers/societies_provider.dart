@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:fccu_societies_hub/features/societies/repositories/firestore_society_repository.dart';
+import 'package:fccu_societies_hub/features/societies/repositories/mock_society_repository.dart';
 import 'package:fccu_societies_hub/features/societies/repositories/society_repository.dart';
 import 'package:fccu_societies_hub/models/society.dart';
 
+// final societiesRepositoryProvider = Provider<SocietyRepository>((ref) => FirestoreSocietyRepository());
 final societiesRepositoryProvider = Provider<SocietyRepository>((ref) => MockSocietyRepository());
 
 final societiesProvider = FutureProvider<List<Society>>(
@@ -10,5 +13,5 @@ final societiesProvider = FutureProvider<List<Society>>(
 );
 
 final societyProvider = FutureProvider.family<Society, String>(
-  (ref, societyId) async => ref.watch(societiesRepositoryProvider).fetchSociety(societyId),
+  (ref, societyId) async => ref.watch(societiesRepositoryProvider).getSociety(societyId),
 );

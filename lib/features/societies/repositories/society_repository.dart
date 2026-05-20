@@ -1,27 +1,16 @@
-import 'package:fccu_societies_hub/mock/mock_societies.dart';
 import 'package:fccu_societies_hub/models/society.dart';
 
 abstract class SocietyRepository {
   Future<List<Society>> fetchSocieties();
 
-  Future<Society> fetchSociety(String societyId);
-
   // TODO
   // Future<List<Society>> fetchMemberSocieties();
-}
 
-class MockSocietyRepository implements SocietyRepository {
-  @override
-  Future<List<Society>> fetchSocieties() async {
-    await Future.delayed(const .new(seconds: 1));
+  Future<Society> getSociety(String societyId);
 
-    return mockSocieties;
-  }
+  Future<void> createSociety(Society society);
 
-  @override
-  Future<Society> fetchSociety(String societyId) async {
-    await Future.delayed(const .new(seconds: 1));
+  Future<void> updateSociety(Society society);
 
-    return mockSocieties.firstWhere((society) => society.id == societyId);
-  }
+  Future<void> deleteSociety(String societyId);
 }
