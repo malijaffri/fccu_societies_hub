@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:fccu_societies_hub/core/router/go_router_refresh_stream.dart';
 import 'package:fccu_societies_hub/core/widgets/app_scaffold.dart';
 import 'package:fccu_societies_hub/features/auth/screens/login_screen.dart';
 import 'package:fccu_societies_hub/features/auth/screens/register_screen.dart';
@@ -14,6 +13,8 @@ import 'package:fccu_societies_hub/features/posts/screens/post_details_screen.da
 import 'package:fccu_societies_hub/features/profile/screens/profile_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/settings_screen.dart';
 import 'package:fccu_societies_hub/features/search/screens/search_screen.dart';
+import 'package:fccu_societies_hub/features/session/models/session_mode.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_mode_provider.dart';
 
 class AppRoute {
   final String routeBase;
@@ -62,63 +63,69 @@ class AppRoutes {
   static const settings = '/settings';
 }
 
-final appRouter = GoRouter(
-  initialLocation: AppRoutes.homeFeed,
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final session = ref.watch(sessionModeProvider).value;
 
-  refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
+  return GoRouter(
+    initialLocation: AppRoutes.homeFeed,
 
-  redirect: (context, state) {
-    final loggedIn = FirebaseAuth.instance.currentUser != null;
+    redirect: (context, state) {
+      // final session = ref.watch(sessionModeProvider).value;
 
-    final isAuthRoute = const [AppRoutes.welcome, AppRoutes.login, AppRoutes.register].contains(state.matchedLocation);
+      final isAuthRoute = const [
+        AppRoutes.welcome,
+        AppRoutes.login,
+        AppRoutes.register,
+      ].contains(state.matchedLocation);
 
-    if (!loggedIn && !isAuthRoute) {
-      return AppRoutes.welcome;
-    }
+      return switch (session) {
+        SessionMode.authenticated => isAuthRoute ? AppRoutes.homeFeed : null,
 
-    if (loggedIn && isAuthRoute) {
-      return AppRoutes.homeFeed;
-    }
+        SessionMode.guest => null,
 
-    return null;
-  },
+        SessionMode.loggedOut => isAuthRoute ? null : AppRoutes.welcome,
 
-  routes: [
-    GoRoute(path: AppRoutes.welcome, builder: (context, state) => const WelcomeScreen()),
+        null => null,
+      };
+    },
 
-    GoRoute(path: AppRoutes.login, builder: (context, state) => const LoginScreen()),
+    routes: [
+      GoRoute(path: AppRoutes.welcome, builder: (context, state) => const WelcomeScreen()),
 
-    GoRoute(path: AppRoutes.register, builder: (context, state) => const RegisterScreen()),
+      GoRoute(path: AppRoutes.login, builder: (context, state) => const LoginScreen()),
 
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) => AppScaffold(navigationShell: navigationShell),
+      GoRoute(path: AppRoutes.register, builder: (context, state) => const RegisterScreen()),
 
-      branches: [
-        .new(
-          routes: [GoRoute(path: AppRoutes.homeFeed, builder: (context, state) => const FeedScreen())],
-        ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => AppScaffold(navigationShell: navigationShell),
 
-        .new(
-          routes: [GoRoute(path: AppRoutes.search, builder: (context, state) => const SearchScreen())],
-        ),
+        branches: [
+          .new(
+            routes: [GoRoute(path: AppRoutes.homeFeed, builder: (context, state) => const FeedScreen())],
+          ),
 
-        .new(
-          routes: [GoRoute(path: AppRoutes.events, builder: (context, state) => const EventsScreen())],
-        ),
-      ],
-    ),
+          .new(
+            routes: [GoRoute(path: AppRoutes.search, builder: (context, state) => const SearchScreen())],
+          ),
 
-    GoRoute(
-      path: AppRoutes.post.asRoute(),
-      builder: (context, state) => PostDetailsScreen(postId: state.pathParameters['id']!),
-    ),
+          .new(
+            routes: [GoRoute(path: AppRoutes.events, builder: (context, state) => const EventsScreen())],
+          ),
+        ],
+      ),
 
-    GoRoute(path: AppRoutes.createPost, builder: (context, state) => const CreatePostScreen()),
+      GoRoute(
+        path: AppRoutes.post.asRoute(),
+        builder: (context, state) => PostDetailsScreen(postId: state.pathParameters['id']!),
+      ),
 
-    GoRoute(path: AppRoutes.createEvent, builder: (context, state) => const CreateEventScreen()),
+      GoRoute(path: AppRoutes.createPost, builder: (context, state) => const CreatePostScreen()),
 
-    GoRoute(path: AppRoutes.profile, builder: (context, state) => const ProfileScreen()),
+      GoRoute(path: AppRoutes.createEvent, builder: (context, state) => const CreateEventScreen()),
 
-    GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
-  ],
-);
+      GoRoute(path: AppRoutes.profile, builder: (context, state) => const ProfileScreen()),
+
+      GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
+    ],
+  );
+});

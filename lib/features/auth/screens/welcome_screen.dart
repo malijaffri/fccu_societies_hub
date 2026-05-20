@@ -6,11 +6,44 @@ import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/features/session/providers/session_repository_provider.dart';
 
-class WelcomeScreen extends ConsumerWidget {
+class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
+  bool _isLoading = false;
+
+  Future<void> _guest() async {
+    FocusScope.of(context).unfocus();
+
+    setState(() => _isLoading = true);
+
+    try {
+      await ref.read(sessionRepositoryProvider).setGuestMode();
+
+      if (!mounted) {
+        return;
+      }
+
+      context.go(AppRoutes.homeFeed);
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(error.toString())));
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -83,16 +116,15 @@ class WelcomeScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.s_24),
 
                   TextButton(
-                    onPressed: () async {
-                      await ref.read(sessionRepositoryProvider).setGuestMode();
+                    onPressed: _isLoading ? null : _guest,
 
-                      if (!context.mounted) {
-                        return;
-                      }
+                    child: Padding(
+                      padding: const .symmetric(vertical: AppSpacing.s_12),
 
-                      context.go(AppRoutes.homeFeed);
-                    },
-                    child: const Text('Continue as Guest'),
+                      child: _isLoading
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Text('Continue as Guest'),
+                    ),
                   ),
                 ],
               ),
