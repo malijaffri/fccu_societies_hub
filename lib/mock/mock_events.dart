@@ -16,6 +16,7 @@ final mockEvents =
               end: .now().add(.new(hours: i * 12 - 12)),
               location: i % 2 == 0 ? 'Building $i' : null,
               imageUrl: i % 3 == 0 ? 'https://placehold.co/600x600.jpg' : null,
+              createdAt: .now().subtract(.new(hours: i)),
             ),
           ),
         )

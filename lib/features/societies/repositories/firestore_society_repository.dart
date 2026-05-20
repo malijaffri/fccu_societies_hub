@@ -17,6 +17,10 @@ class FirestoreSocietyRepository implements SocietyRepository {
   Future<Society?> getSociety(String societyId) async {
     final doc = await _db.collection('societies').doc(societyId).get();
 
+    if (!doc.exists) {
+      return null;
+    }
+
     return Society.fromMap(doc.data()!);
   }
 

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/features/auth/providers/auth_repository_provider.dart';
+import 'package:fccu_societies_hub/features/auth/providers/user_provisioning_provider.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_error_message.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_validators.dart';
 
@@ -45,9 +46,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await ref
+      final credential = await ref
           .read(authRepositoryProvider)
           .register(email: _emailController.text.trim(), password: _passwordController.text);
+
+      await ref.read(userProvisioningProvider).provisionUser(credential.user!);
 
       TextInput.finishAutofillContext();
 

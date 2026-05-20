@@ -24,6 +24,10 @@ class FirestorePostRepository implements PostRepository {
   Future<Post?> getPost(String postId) async {
     final doc = await _db.collection('posts').doc(postId).get();
 
+    if (!doc.exists) {
+      return null;
+    }
+
     return Post.fromMap(doc.data()!);
   }
 

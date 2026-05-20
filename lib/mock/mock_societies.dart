@@ -11,5 +11,6 @@ final mockSocieties = List.generate(
     memberCount: i * 3,
     isFollowed: i % 3 == 0,
     isMember: i % 4 == 0,
+    createdAt: .now().subtract(.new(hours: i)),
   ),
 );

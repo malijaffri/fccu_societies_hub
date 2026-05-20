@@ -17,6 +17,10 @@ class FirestoreUserRepository implements UserRepository {
   Future<UserModel?> getUser(String userId) async {
     final doc = await _db.collection('users').doc(userId).get();
 
+    if (!doc.exists) {
+      return null;
+    }
+
     return UserModel.fromMap(doc.data()!);
   }
 
