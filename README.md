@@ -166,7 +166,8 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Developed by students of **Forman Christian College University, Lahore, Pakistan**.
 
-- **Mali Jaffri** — [@malijaffri](https://github.com/malijaffri)
+- **Mohammad Ali Jaffri** — [@malijaffri](https://github.com/malijaffri)
+- **Hashim Aleem** — [@Hashim-Aleem](https://github.com/Hashim-Aleem)
 
 ---
 
