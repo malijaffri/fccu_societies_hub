@@ -11,7 +11,7 @@ class MockSocietyRepository implements SocietyRepository {
   }
 
   @override
-  Future<Society> getSociety(String societyId) async {
+  Future<Society?> getSociety(String societyId) async {
     await Future.delayed(const .new(seconds: 1));
 
     return mockSocieties.firstWhere((society) => society.id == societyId);

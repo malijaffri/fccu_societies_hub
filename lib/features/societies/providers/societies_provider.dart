@@ -12,6 +12,6 @@ final societiesProvider = FutureProvider<List<Society>>(
   (ref) async => ref.watch(societiesRepositoryProvider).fetchSocieties(),
 );
 
-final societyProvider = FutureProvider.family<Society, String>(
+final societyProvider = FutureProvider.family<Society?, String>(
   (ref, societyId) async => ref.watch(societiesRepositoryProvider).getSociety(societyId),
 );

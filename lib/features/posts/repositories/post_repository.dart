@@ -5,7 +5,7 @@ abstract class PostRepository {
 
   Future<List<Post>> fetchFeed();
 
-  Future<Post> getPost(String postId);
+  Future<Post?> getPost(String postId);
 
   Future<void> createPost(Post post);
 

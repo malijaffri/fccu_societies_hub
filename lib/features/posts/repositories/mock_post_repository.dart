@@ -18,7 +18,7 @@ class MockPostRepository implements PostRepository {
   }
 
   @override
-  Future<Post> getPost(String postId) async {
+  Future<Post?> getPost(String postId) async {
     await Future.delayed(const .new(seconds: 1));
 
     return mockPosts.firstWhere((post) => post.id == postId);

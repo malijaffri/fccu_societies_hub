@@ -11,7 +11,7 @@ class MockEventRepository implements EventRepository {
   }
 
   @override
-  Future<Event> getEvent(String eventId) async {
+  Future<Event?> getEvent(String eventId) async {
     await Future.delayed(const .new(seconds: 1));
 
     return mockEvents.firstWhere((event) => event.id == eventId);

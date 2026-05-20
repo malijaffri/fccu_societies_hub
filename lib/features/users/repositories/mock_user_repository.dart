@@ -11,7 +11,7 @@ class MockUserRepository implements UserRepository {
   }
 
   @override
-  Future<UserModel> getUser(String userId) async {
+  Future<UserModel?> getUser(String userId) async {
     await Future.delayed(const .new(seconds: 1));
 
     return mockUsers.firstWhere((user) => user.id == userId);

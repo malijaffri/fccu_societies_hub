@@ -10,6 +10,6 @@ final eventsRepositoryProvider = Provider<EventRepository>((ref) => MockEventRep
 
 final eventsProvider = FutureProvider<List<Event>>((ref) async => ref.watch(eventsRepositoryProvider).fetchEvents());
 
-final eventProvider = FutureProvider.family<Event, String>(
+final eventProvider = FutureProvider.family<Event?, String>(
   (ref, eventId) async => ref.watch(eventsRepositoryProvider).getEvent(eventId),
 );

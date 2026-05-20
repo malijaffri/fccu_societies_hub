@@ -6,7 +6,7 @@ abstract class SocietyRepository {
   // TODO
   // Future<List<Society>> fetchMemberSocieties();
 
-  Future<Society> getSociety(String societyId);
+  Future<Society?> getSociety(String societyId);
 
   Future<void> createSociety(Society society);
 

@@ -41,7 +41,7 @@ class PostDetailsScreen extends ConsumerWidget {
       );
     }
 
-    final post = postAsync.requireValue;
+    final post = postAsync.requireValue!; // TODO: `!` might cause an issue.
 
     return Scaffold(
       appBar: AppBar(),

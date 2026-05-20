@@ -12,6 +12,6 @@ final feedProvider = FutureProvider<List<Post>>((ref) async => ref.watch(postsRe
 
 final postsProvider = FutureProvider<List<Post>>((ref) async => ref.watch(postsRepositoryProvider).fetchPosts());
 
-final postProvider = FutureProvider.family<Post, String>(
+final postProvider = FutureProvider.family<Post?, String>(
   (ref, postId) async => ref.watch(postsRepositoryProvider).getPost(postId),
 );
