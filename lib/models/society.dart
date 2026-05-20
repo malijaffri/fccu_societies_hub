@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Society extends Equatable {
@@ -12,6 +13,8 @@ class Society extends Equatable {
   final bool isFollowed;
   final bool isMember;
 
+  final DateTime createdAt;
+
   const Society({
     required this.id,
     required this.name,
@@ -21,6 +24,7 @@ class Society extends Equatable {
     required this.memberCount,
     required this.isFollowed,
     required this.isMember,
+    required this.createdAt,
   });
 
   factory Society.fromMap(Map<String, dynamic> map) => Society(
@@ -31,6 +35,7 @@ class Society extends Equatable {
     followerCount: map['followerCount'],
     memberCount: map['memberCount'],
     isFollowed: map['isFollowed'],
+    createdAt: (map['createdAt'] as Timestamp).toDate(),
     isMember: map['isMember'],
   );
 
@@ -42,11 +47,11 @@ class Society extends Equatable {
     'followerCount': followerCount,
     'memberCount': memberCount,
     'isFollowed': isFollowed,
+    'createdAt': Timestamp.fromDate(createdAt),
     'isMember': isMember,
   };
 
   Society copyWith({
-    String? id,
     String? name,
     String? imageUrl,
     String? description,
@@ -55,7 +60,8 @@ class Society extends Equatable {
     bool? isFollowed,
     bool? isMember,
   }) => Society(
-    id: id ?? this.id,
+    id: id,
+    createdAt: createdAt,
     name: name ?? this.name,
     imageUrl: imageUrl ?? this.imageUrl,
     description: description ?? this.description,

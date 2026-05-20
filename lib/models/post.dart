@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:fccu_societies_hub/models/media.dart';
@@ -54,8 +55,8 @@ class Post extends Equatable {
     media: map['media'],
     likeCount: map['likeCount'],
     commentCount: map['commentCount'],
+    createdAt: (map['createdAt'] as Timestamp).toDate(),
     isLiked: map['isLiked'],
-    createdAt: map['createdAt'],
     eventId: map['eventId'],
   );
 
@@ -67,17 +68,16 @@ class Post extends Equatable {
     'isFollowed': isFollowed,
     'authorId': authorId,
     'authorName': authorName,
+    'createdAt': Timestamp.fromDate(createdAt),
     'content': content,
     'media': media,
     'likeCount': likeCount,
     'commentCount': commentCount,
     'isLiked': isLiked,
-    'createdAt': createdAt,
     'eventId': eventId,
   };
 
   Post copyWith({
-    String? id,
     String? societyId,
     String? societyName,
     String? societyImage,
@@ -89,10 +89,10 @@ class Post extends Equatable {
     int? likeCount,
     int? commentCount,
     bool? isLiked,
-    DateTime? createdAt,
     String? eventId,
   }) => Post(
-    id: id ?? this.id,
+    id: id,
+    createdAt: createdAt,
     societyId: societyId ?? this.societyId,
     societyName: societyName ?? this.societyName,
     societyImage: societyImage ?? this.societyImage,
@@ -104,7 +104,6 @@ class Post extends Equatable {
     likeCount: likeCount ?? this.likeCount,
     commentCount: commentCount ?? this.commentCount,
     isLiked: isLiked ?? this.isLiked,
-    createdAt: createdAt ?? this.createdAt,
     eventId: eventId ?? this.eventId,
   );
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Event extends Equatable {
@@ -16,6 +17,8 @@ class Event extends Equatable {
 
   final String? imageUrl;
 
+  final DateTime createdAt;
+
   const Event({
     required this.id,
     required this.societyId,
@@ -26,6 +29,7 @@ class Event extends Equatable {
     this.end,
     this.location,
     this.imageUrl,
+    required this.createdAt,
   });
 
   factory Event.fromMap(Map<String, dynamic> map) => Event(
@@ -38,6 +42,7 @@ class Event extends Equatable {
     end: map['end'],
     location: map['location'],
     imageUrl: map['imageUrl'],
+    createdAt: (map['createdAt'] as Timestamp).toDate(),
   );
 
   Map<String, dynamic> toMap() => {
@@ -50,10 +55,10 @@ class Event extends Equatable {
     'end': end,
     'location': location,
     'imageUrl': imageUrl,
+    'createdAt': Timestamp.fromDate(createdAt),
   };
 
   Event copyWith({
-    String? id,
     String? societyId,
     String? societyName,
     String? title,
@@ -63,7 +68,8 @@ class Event extends Equatable {
     String? location,
     String? imageUrl,
   }) => Event(
-    id: id ?? this.id,
+    id: id,
+    createdAt: createdAt,
     societyId: societyId ?? this.societyId,
     societyName: societyName ?? this.societyName,
     title: title ?? this.title,

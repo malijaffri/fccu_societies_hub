@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Comment extends Equatable {
@@ -30,7 +31,7 @@ class Comment extends Equatable {
     userName: map['userName'],
     userAvatar: map['userAvatar'],
     content: map['content'],
-    createdAt: map['createdAt'],
+    createdAt: (map['createdAt'] as Timestamp).toDate(),
   );
 
   Map<String, dynamic> toMap() => {
@@ -40,25 +41,17 @@ class Comment extends Equatable {
     'userName': userName,
     'userAvatar': userAvatar,
     'content': content,
-    'createdAt': createdAt,
+    'createdAt': Timestamp.fromDate(createdAt),
   };
 
-  Comment copyWith({
-    String? id,
-    String? postId,
-    String? userId,
-    String? userName,
-    String? userAvatar,
-    String? content,
-    DateTime? createdAt,
-  }) => Comment(
-    id: id ?? this.id,
+  Comment copyWith({String? postId, String? userId, String? userName, String? userAvatar, String? content}) => Comment(
+    id: id,
     postId: postId ?? this.postId,
     userId: userId ?? this.userId,
     userName: userName ?? this.userName,
     userAvatar: userAvatar ?? this.userAvatar,
     content: content ?? this.content,
-    createdAt: createdAt ?? this.createdAt,
+    createdAt: createdAt,
   );
 
   @override
