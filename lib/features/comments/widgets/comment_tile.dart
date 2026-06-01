@@ -19,7 +19,7 @@ class CommentTile extends StatelessWidget {
       padding: const .symmetric(horizontal: AppSpacing.s_16, vertical: AppSpacing.s_12),
 
       child: Row(
-        crossAxisAlignment: .start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
           Avatar(avatarUrl: comment.userAvatar, name: comment.userName),
@@ -28,7 +28,7 @@ class CommentTile extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 Row(

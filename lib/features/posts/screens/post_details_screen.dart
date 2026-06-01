@@ -41,7 +41,12 @@ class PostDetailsScreen extends ConsumerWidget {
       );
     }
 
-    final post = postAsync.requireValue!; // TODO: `!` might cause an issue.
+    final post = postAsync.value;
+    if (post == null) {
+      return Scaffold(
+        body: AppError(error: 'Post not found', onRetry: () => ref.invalidate(postProvider(postId))),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(),
@@ -55,16 +60,21 @@ class PostDetailsScreen extends ConsumerWidget {
           children: [
             Expanded(
               child: ListView(
-                padding: const .only(top: AppSpacing.s_8, bottom: AppSpacing.s_12),
+                padding: const EdgeInsets.only(top: AppSpacing.s_8, bottom: AppSpacing.s_12),
 
                 children: [
                   Padding(
-                    padding: const .symmetric(horizontal: AppSpacing.s_12, vertical: AppSpacing.s_8),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s_12, vertical: AppSpacing.s_8),
                     child: PostCard(post: post, compact: false),
                   ),
 
                   Padding(
-                    padding: const .fromLTRB(AppSpacing.s_16, AppSpacing.s_12, AppSpacing.s_16, AppSpacing.s_8),
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.s_16,
+                      AppSpacing.s_12,
+                      AppSpacing.s_16,
+                      AppSpacing.s_8,
+                    ),
 
                     child: Text('Comments', style: Theme.of(context).textTheme.titleMedium),
                   ),
@@ -74,7 +84,7 @@ class PostDetailsScreen extends ConsumerWidget {
               ),
             ),
 
-            SafeArea(top: false, child: canComment ? const CommentComposer() : const GuestCommentPrompt()),
+            SafeArea(top: false, child: canComment ? CommentComposer(postId: postId) : const GuestCommentPrompt()),
           ],
         ),
       ),

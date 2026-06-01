@@ -183,7 +183,7 @@ class _FourImageGrid extends StatelessWidget {
                         alignment: Alignment.center,
                         child: Text(
                           '+${extraMedia.length + 1}',
-                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: .w700),
+                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700),
                         ),
                       ),
                   ],

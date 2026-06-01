@@ -29,7 +29,7 @@ class AppError extends StatelessWidget {
 
             const SizedBox(height: AppSpacing.s_8),
 
-            Text(error.toString(), textAlign: .center, style: theme.textTheme.bodyMedium),
+            Text(error.toString(), textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
 
             if (onRetry != null) ...[
               const SizedBox(height: AppSpacing.s_20),

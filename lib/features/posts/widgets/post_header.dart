@@ -16,7 +16,7 @@ class PostHeader extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Row(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Avatar(
           avatarUrl: post.societyImage,
@@ -31,9 +31,9 @@ class PostHeader extends StatelessWidget {
           child: Padding(
             padding: const .only(top: AppSpacing.s_2),
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(post.societyName, style: theme.textTheme.titleMedium?.copyWith(fontSize: 15.5, fontWeight: .w600)),
+                Text(post.societyName, style: theme.textTheme.titleMedium?.copyWith(fontSize: 15.5, fontWeight: FontWeight.w600)),
 
                 const SizedBox(height: AppSpacing.s_2),
 

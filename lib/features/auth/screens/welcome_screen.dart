@@ -57,7 +57,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
               constraints: const .new(maxWidth: 420),
 
               child: Column(
-                crossAxisAlignment: .stretch,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
 
                 children: [
                   Container(
@@ -74,9 +74,9 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                   Text(
                     'FCCU Societies Hub',
 
-                    textAlign: .center,
+                    textAlign: TextAlign.center,
 
-                    style: theme.textTheme.headlineMedium?.copyWith(fontWeight: .w700),
+                    style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
 
                   const SizedBox(height: AppSpacing.s_12),
@@ -84,7 +84,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                   Text(
                     'Discover societies, stay updated with events, and connect with your campus community.',
 
-                    textAlign: .center,
+                    textAlign: TextAlign.center,
 
                     style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant, height: 1.45),
                   ),

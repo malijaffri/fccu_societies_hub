@@ -54,9 +54,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
       initialDate: initial ?? now,
 
-      firstDate: now.subtract(const .new(days: 30)),
+      firstDate: now.subtract(const Duration(days: 30)),
 
-      lastDate: .new(now.year + 5),
+      lastDate: DateTime(now.year + 5),
     );
 
     if (pickedDate == null || !mounted) {
@@ -66,14 +66,14 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     final pickedTime = await showTimePicker(
       context: context,
 
-      initialTime: initial != null ? .fromDateTime(initial) : .now(),
+      initialTime: initial != null ? TimeOfDay.fromDateTime(initial) : TimeOfDay.now(),
     );
 
     if (pickedTime == null) {
       return null;
     }
 
-    return .new(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
+    return DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
   }
 
   Future<void> _pickStartDateTime() async {
@@ -86,14 +86,15 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     setState(() {
       _startsAt = picked;
 
-      if (_endsAt != null && _endsAt!.isBefore(_startsAt!)) {
-        _endsAt = _startsAt!.add(const .new(hours: 2));
+      if (_endsAt != null && _endsAt!.isBefore(picked)) {
+        _endsAt = picked.add(const Duration(hours: 2));
       }
     });
   }
 
   Future<void> _pickEndDateTime() async {
-    final picked = await _pickDateTime(initial: _endsAt ?? _startsAt?.add(const .new(hours: 2)));
+    final initial = _endsAt ?? _startsAt?.add(const Duration(hours: 2));
+    final picked = await _pickDateTime(initial: initial);
 
     if (picked == null) {
       return;
@@ -131,7 +132,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
     setState(() => _isSubmitting = true);
 
-    await Future.delayed(const .new(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) {
       return;
@@ -140,7 +141,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     Navigator.pop(context);
   }
 
-  void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(message)));
+  void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +153,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
         actions: [
           Padding(
-            padding: const .only(right: AppSpacing.s_8),
+            padding: const EdgeInsets.only(right: AppSpacing.s_8),
 
             child: TextButton(
               onPressed: _isSubmitting ? null : _submit,
@@ -168,10 +169,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       body: SafeArea(
         child: societiesAsync.when(
           data: (societies) => SingleChildScrollView(
-            padding: const .all(AppSpacing.s_16),
+            padding: const EdgeInsets.all(AppSpacing.s_16),
 
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 Text('Event Details', style: Theme.of(context).textTheme.titleLarge),
@@ -191,9 +192,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 TextField(
                   controller: _titleController,
 
-                  textCapitalization: .words,
+                  textCapitalization: TextCapitalization.words,
 
-                  decoration: const .new(labelText: 'Event Title', hintText: 'Flutter Workshop 2026'),
+                  decoration: const InputDecoration(labelText: 'Event Title', hintText: 'Flutter Workshop 2026'),
                 ),
 
                 const SizedBox(height: AppSpacing.s_16),
@@ -204,9 +205,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                   minLines: 4,
                   maxLines: null,
 
-                  textCapitalization: .sentences,
+                  textCapitalization: TextCapitalization.sentences,
 
-                  decoration: const .new(labelText: 'Description', alignLabelWithHint: true),
+                  decoration: const InputDecoration(labelText: 'Description', alignLabelWithHint: true),
                 ),
 
                 const SizedBox(height: AppSpacing.s_20),

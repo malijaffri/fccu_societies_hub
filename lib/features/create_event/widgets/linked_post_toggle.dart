@@ -19,7 +19,7 @@ class LinkedPostToggle extends StatelessWidget {
       children: [
         Expanded(
           child: Column(
-            crossAxisAlignment: .start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
               Text('Also create post', style: Theme.of(context).textTheme.titleSmall),

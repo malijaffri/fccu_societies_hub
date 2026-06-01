@@ -5,24 +5,28 @@ import 'package:fccu_societies_hub/models/society.dart';
 class MockSocietyRepository implements SocietyRepository {
   @override
   Future<List<Society>> fetchSocieties() async {
-    await Future.delayed(const .new(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     return mockSocieties;
   }
 
   @override
   Future<Society?> getSociety(String societyId) async {
-    await Future.delayed(const .new(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
-    return mockSocieties.firstWhere((society) => society.id == societyId);
+    try {
+      return mockSocieties.firstWhere((society) => society.id == societyId);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
-  Future<void> createSociety(Society society) async => await Future.delayed(const .new(seconds: 1));
+  Future<void> createSociety(Society society) async => await Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<void> updateSociety(Society society) async => await Future.delayed(const .new(seconds: 1));
+  Future<void> updateSociety(Society society) async => await Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<void> deleteSociety(String societyId) async => await Future.delayed(const .new(seconds: 1));
+  Future<void> deleteSociety(String societyId) async => await Future.delayed(const Duration(seconds: 1));
 }

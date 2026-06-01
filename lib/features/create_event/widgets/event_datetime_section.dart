@@ -29,7 +29,7 @@ class EventDateTimeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
         Text('Date & Time', style: Theme.of(context).textTheme.titleMedium),
@@ -46,7 +46,7 @@ class EventDateTimeSection extends StatelessWidget {
                   padding: const .symmetric(vertical: AppSpacing.s_12),
 
                   child: Column(
-                    crossAxisAlignment: .start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [const Text('Starts'), const SizedBox(height: 4), Text(_format(startsAt))],
                   ),
@@ -64,7 +64,7 @@ class EventDateTimeSection extends StatelessWidget {
                   padding: const .symmetric(vertical: AppSpacing.s_12),
 
                   child: Column(
-                    crossAxisAlignment: .start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [const Text('Ends'), const SizedBox(height: 4), Text(_format(endsAt))],
                   ),

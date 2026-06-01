@@ -18,13 +18,13 @@ class SocietyListSection extends StatelessWidget {
     }
 
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
         Padding(
           padding: const .fromLTRB(AppSpacing.s_16, 0, AppSpacing.s_16, AppSpacing.s_8),
 
-          child: Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: .w700)),
+          child: Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
         ),
 
         ...societies.map((society) => SocietyCard(society: society)),

@@ -39,7 +39,7 @@ class PostCard extends StatelessWidget {
           child: Padding(
             padding: const .all(AppSpacing.s_16),
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PostHeader(post: post),
 
@@ -48,8 +48,8 @@ class PostCard extends StatelessWidget {
                 SelectableText(
                   post.content,
                   maxLines: compact ? 3 : null,
-                  // overflow: .ellipsis, // TODO
-                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5, overflow: .ellipsis),
+                  // overflow: TextOverflow.ellipsis, // TODO
+                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5, overflow: TextOverflow.ellipsis),
                 ),
 
                 if (post.media.isNotEmpty) ...[

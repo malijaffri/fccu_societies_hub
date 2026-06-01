@@ -24,10 +24,10 @@ class MediaPickerSection extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: .spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Images', style: theme.textTheme.titleMedium),
 

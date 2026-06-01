@@ -24,7 +24,7 @@ Future<void> showAuthRequiredSheet(BuildContext context) => showModalBottomSheet
 
           const SizedBox(height: 8),
 
-          Text('Create an account or login to interact with societies.', textAlign: .center),
+          Text('Create an account or login to interact with societies.', textAlign: TextAlign.center),
 
           const SizedBox(height: 24),
 

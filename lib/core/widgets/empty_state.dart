@@ -27,7 +27,7 @@ class EmptyState extends StatelessWidget {
 
             const SizedBox(height: AppSpacing.s_16),
 
-            Text(title, style: theme.textTheme.titleLarge, textAlign: .center),
+            Text(title, style: theme.textTheme.titleLarge, textAlign: TextAlign.center),
 
             if (subtitle != null) ...[
               const SizedBox(height: AppSpacing.s_8),
@@ -35,7 +35,7 @@ class EmptyState extends StatelessWidget {
               Text(
                 subtitle!,
 
-                textAlign: .center,
+                textAlign: TextAlign.center,
 
                 style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),

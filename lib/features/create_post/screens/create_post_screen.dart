@@ -55,7 +55,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
     final limitedImages = images.take(4 - _selectedImages.length);
 
-    setState(() => _selectedImages.addAll(limitedImages.map((image) => .new(image.path))));
+    setState(() => _selectedImages.addAll(limitedImages.map((image) => File(image.path))));
   }
 
   void _removeImage(File image) => setState(() => _selectedImages.remove(image));
@@ -81,7 +81,9 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       final storage = ref.read(storageServiceProvider);
 
       final media = await Future.wait(
-        _selectedImages.map((image) async => Media(url: await storage.uploadPostImage(image), type: .image)).toList(),
+        _selectedImages
+            .map((image) async => Media(url: await storage.uploadPostImage(image), type: MediaType.image))
+            .toList(),
       );
 
       final user = ref.read(currentUserModelProvider).value;
@@ -136,7 +138,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
         actions: [
           Padding(
-            padding: const .only(right: AppSpacing.s_8),
+            padding: const EdgeInsets.only(right: AppSpacing.s_8),
 
             child: TextButton(
               onPressed: _isSubmitting ? null : _submit,
@@ -154,10 +156,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       body: SafeArea(
         child: societiesAsync.when(
           data: (societies) => SingleChildScrollView(
-            padding: const .all(AppSpacing.s_16),
+            padding: const EdgeInsets.all(AppSpacing.s_16),
 
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 SocietySelector(
@@ -165,12 +167,19 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
                   value: _selectedSocietyId,
 
-                  onChanged: (value) => setState(() {
-                    _selectedSocietyId = value;
-                    final society = societies.firstWhere((society) => society.id == value);
-                    _selectedSocietyName = society.name;
-                    _selectedSocietyImage = society.imageUrl;
-                  }),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    try {
+                      final society = societies.firstWhere((society) => society.id == value);
+                      setState(() {
+                        _selectedSocietyId = value;
+                        _selectedSocietyName = society.name;
+                        _selectedSocietyImage = society.imageUrl;
+                      });
+                    } catch (e) {
+                      _showError('Society not found.');
+                    }
+                  },
                 ),
 
                 const SizedBox(height: AppSpacing.s_20),

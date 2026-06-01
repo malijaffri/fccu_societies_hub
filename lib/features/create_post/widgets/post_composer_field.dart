@@ -15,7 +15,7 @@ class PostComposerField extends StatelessWidget {
     minLines: 6,
     maxLines: null,
 
-    textCapitalization: .sentences,
+    textCapitalization: TextCapitalization.sentences,
 
     decoration: .new(
       hintText: 'Share updates, announcements, thoughts...',

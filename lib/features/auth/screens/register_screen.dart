@@ -89,15 +89,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
               child: AutofillGroup(
                 child: Column(
-                  crossAxisAlignment: .stretch,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
 
                   children: [
                     Text(
                       'Create Account',
 
-                      textAlign: .center,
+                      textAlign: TextAlign.center,
 
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: .w700),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
                     ),
 
                     const SizedBox(height: AppSpacing.s_32),

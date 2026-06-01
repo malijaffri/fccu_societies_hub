@@ -75,11 +75,11 @@ final _cardShape = RoundedRectangleBorder(borderRadius: .circular(AppRadius.r_16
 final _fabShape = RoundedRectangleBorder(borderRadius: .circular(AppRadius.r_16));
 
 const _textTheme = TextTheme(
-  headlineMedium: TextStyle(fontSize: 28, fontWeight: .w700, letterSpacing: -0.5),
+  headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.5),
 
-  titleLarge: TextStyle(fontSize: 20, fontWeight: .w700),
+  titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
 
-  titleMedium: TextStyle(fontSize: 16, fontWeight: .w600),
+  titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
 
   bodyLarge: TextStyle(fontSize: 16, height: 1.5),
 

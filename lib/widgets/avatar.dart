@@ -32,7 +32,7 @@ class Avatar extends StatelessWidget {
                 ? Text(
                     nameAcronym,
                     style: (textStyle ?? theme.textTheme.labelLarge)?.copyWith(
-                      fontWeight: .w700,
+                      fontWeight: FontWeight.w700,
                       color: colorScheme.onSecondaryContainer,
                     ),
                   )

@@ -10,7 +10,7 @@ class EventLocationField extends StatelessWidget {
     return TextField(
       controller: controller,
 
-      textCapitalization: .words,
+      textCapitalization: TextCapitalization.words,
 
       decoration: const .new(
         labelText: 'Location',

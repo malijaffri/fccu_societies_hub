@@ -78,7 +78,7 @@ class _ActionButton extends StatelessWidget {
 
               Text(
                 label!,
-                style: theme.textTheme.bodyMedium?.copyWith(color: color, fontWeight: .w500),
+                style: theme.textTheme.bodyMedium?.copyWith(color: color, fontWeight: FontWeight.w500),
               ),
             ],
           ],

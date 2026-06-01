@@ -5,24 +5,28 @@ import 'package:fccu_societies_hub/models/event.dart';
 class MockEventRepository implements EventRepository {
   @override
   Future<List<Event>> fetchEvents() async {
-    await Future.delayed(const .new(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     return mockEvents;
   }
 
   @override
   Future<Event?> getEvent(String eventId) async {
-    await Future.delayed(const .new(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
-    return mockEvents.firstWhere((event) => event.id == eventId);
+    try {
+      return mockEvents.firstWhere((event) => event.id == eventId);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
-  Future<void> createEvent(Event event) async => await Future.delayed(const .new(seconds: 1));
+  Future<void> createEvent(Event event) async => await Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<void> updateEvent(Event event) async => await Future.delayed(const .new(seconds: 1));
+  Future<void> updateEvent(Event event) async => await Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<void> deleteEvent(String eventId) async => await Future.delayed(const .new(seconds: 1));
+  Future<void> deleteEvent(String eventId) async => await Future.delayed(const Duration(seconds: 1));
 }

@@ -8,6 +8,7 @@ import 'package:fccu_societies_hub/features/auth/screens/welcome_screen.dart';
 import 'package:fccu_societies_hub/features/create_event/screens/create_event_screen.dart';
 import 'package:fccu_societies_hub/features/create_post/screens/create_post_screen.dart';
 import 'package:fccu_societies_hub/features/events/screens/events_screen.dart';
+import 'package:fccu_societies_hub/features/events/widgets/event_card.dart';
 import 'package:fccu_societies_hub/features/feed/screens/feed_screen.dart';
 import 'package:fccu_societies_hub/features/posts/screens/post_details_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/profile_screen.dart';
@@ -15,6 +16,8 @@ import 'package:fccu_societies_hub/features/profile/screens/settings_screen.dart
 import 'package:fccu_societies_hub/features/search/screens/search_screen.dart';
 import 'package:fccu_societies_hub/features/session/models/session_mode.dart';
 import 'package:fccu_societies_hub/features/session/providers/session_mode_provider.dart';
+import 'package:fccu_societies_hub/features/societies/screens/society_details_screen.dart';
+import 'package:fccu_societies_hub/features/societies/screens/society_screen.dart';
 
 class AppRoute {
   final String routeBase;
@@ -57,6 +60,8 @@ class AppRoutes {
   static const search = '/search';
   static const events = '/events';
   static const post = AppRoute('/post', ['id']);
+  static const society = AppRoute('/society', ['id']);
+  static const event = AppRoute('/event', ['id']);
   static const createPost = '/create-post';
   static const createEvent = '/create-event';
   static const profile = '/profile';
@@ -100,15 +105,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, navigationShell) => AppScaffold(navigationShell: navigationShell),
 
         branches: [
-          .new(
+          StatefulShellBranch(
             routes: [GoRoute(path: AppRoutes.homeFeed, builder: (context, state) => const FeedScreen())],
           ),
 
-          .new(
+          StatefulShellBranch(
             routes: [GoRoute(path: AppRoutes.search, builder: (context, state) => const SearchScreen())],
           ),
 
-          .new(
+          StatefulShellBranch(
             routes: [GoRoute(path: AppRoutes.events, builder: (context, state) => const EventsScreen())],
           ),
         ],
@@ -117,6 +122,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.post.asRoute(),
         builder: (context, state) => PostDetailsScreen(postId: state.pathParameters['id']!),
+      ),
+
+      GoRoute(
+        path: AppRoutes.society.asRoute(),
+        builder: (context, state) => SocietyDetailsScreen(societyId: state.pathParameters['id']!),
       ),
 
       GoRoute(path: AppRoutes.createPost, builder: (context, state) => const CreatePostScreen()),

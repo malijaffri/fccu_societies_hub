@@ -5,8 +5,8 @@ import 'package:fccu_societies_hub/features/societies/repositories/mock_society_
 import 'package:fccu_societies_hub/features/societies/repositories/society_repository.dart';
 import 'package:fccu_societies_hub/models/society.dart';
 
-// final societyRepositoryProvider = Provider<SocietyRepository>((ref) => FirestoreSocietyRepository());
-final societyRepositoryProvider = Provider<SocietyRepository>((ref) => MockSocietyRepository());
+// final societyRepositoryProvider = Provider<SocietyRepository>((ref) => MockSocietyRepository());
+final societyRepositoryProvider = Provider<SocietyRepository>((ref) => FirestoreSocietyRepository());
 
 final societiesProvider = FutureProvider<List<Society>>(
   (ref) async => ref.watch(societyRepositoryProvider).fetchSocieties(),
