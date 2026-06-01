@@ -82,9 +82,10 @@ class FirestorePostRepository implements PostRepository {
   }
 
   @override
-  Future<void> createPost(Post post) async {
+  Future<String> createPost(Post post) async {
     final doc = _db.collection('posts').doc();
     await doc.set(post.copyWith(id: doc.id).toMap());
+    return doc.id;
   }
 
   @override

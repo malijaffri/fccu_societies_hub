@@ -92,20 +92,33 @@ class PostHeader extends ConsumerWidget {
           icon: const Icon(Icons.more_horiz_rounded),
           onSelected: (action) {
             if (action == _PostAction.delete) _confirmDelete(context, ref);
+            if (action == _PostAction.edit) {
+              context.push(AppRoutes.editPost.resolve({'id': post.id}));
+            }
           },
           itemBuilder: (_) => [
-            if (isOwner)
+            if (isOwner) ...[
+              PopupMenuItem(
+                value: _PostAction.edit,
+                child: const Row(
+                  children: [
+                    Icon(Icons.edit_outlined, size: 20),
+                    SizedBox(width: AppSpacing.s_8),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: _PostAction.delete,
                 child: Row(
                   children: [
-                    Icon(Icons.delete_outline_rounded,
-                        size: 20, color: colorScheme.error),
+                    Icon(Icons.delete_outline_rounded, size: 20, color: colorScheme.error),
                     const SizedBox(width: AppSpacing.s_8),
                     Text('Delete', style: TextStyle(color: colorScheme.error)),
                   ],
                 ),
               ),
+            ],
             const PopupMenuItem(
               value: _PostAction.report,
               child: Row(
@@ -123,4 +136,4 @@ class PostHeader extends ConsumerWidget {
   }
 }
 
-enum _PostAction { delete, report }
+enum _PostAction { edit, delete, report }

@@ -18,8 +18,8 @@ class Event extends Equatable {
   final String? imageUrl;
 
   final int rsvpCount;
-  // Computed by repository — not stored in the document.
   final bool isRsvped;
+  final String? linkedPostId;
 
   final DateTime createdAt;
 
@@ -35,6 +35,7 @@ class Event extends Equatable {
     this.imageUrl,
     this.rsvpCount = 0,
     this.isRsvped = false,
+    this.linkedPostId,
     required this.createdAt,
   });
 
@@ -49,6 +50,7 @@ class Event extends Equatable {
     location: map['location'] as String?,
     imageUrl: map['imageUrl'] as String?,
     rsvpCount: map['rsvpCount'] as int? ?? 0,
+    linkedPostId: map['linkedPostId'] as String?,
     createdAt: (map['createdAt'] as Timestamp).toDate(),
   );
 
@@ -63,6 +65,7 @@ class Event extends Equatable {
     'location': location,
     'imageUrl': imageUrl,
     'rsvpCount': rsvpCount,
+    'linkedPostId': linkedPostId,
     'createdAt': Timestamp.fromDate(createdAt),
   };
 
@@ -79,6 +82,7 @@ class Event extends Equatable {
     String? imageUrl,
     int? rsvpCount,
     bool? isRsvped,
+    String? linkedPostId,
   }) => Event(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -92,6 +96,7 @@ class Event extends Equatable {
     imageUrl: imageUrl ?? this.imageUrl,
     rsvpCount: rsvpCount ?? this.rsvpCount,
     isRsvped: isRsvped ?? this.isRsvped,
+    linkedPostId: linkedPostId ?? this.linkedPostId,
   );
 
   @override

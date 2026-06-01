@@ -7,7 +7,7 @@ abstract class EventRepository {
 
   Future<Event?> getEvent(String eventId, {String? currentUserId});
 
-  Future<void> createEvent(Event event);
+  Future<String> createEvent(Event event);
 
   Future<void> updateEvent(Event event);
 
@@ -16,4 +16,6 @@ abstract class EventRepository {
   Future<void> rsvpEvent(String eventId, String userId);
 
   Future<void> unrsvpEvent(String eventId, String userId);
+
+  Future<void> updateEventField(String eventId, Map<String, dynamic> fields);
 }

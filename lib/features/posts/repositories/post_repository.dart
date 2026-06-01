@@ -11,7 +11,7 @@ abstract class PostRepository {
 
   Future<Post?> getPost(String postId, {String? currentUserId});
 
-  Future<void> createPost(Post post);
+  Future<String> createPost(Post post);
 
   Future<void> updatePost(Post post);
 

@@ -12,7 +12,9 @@ import 'package:fccu_societies_hub/features/events/screens/event_details_screen.
 import 'package:fccu_societies_hub/features/events/screens/events_screen.dart';
 import 'package:fccu_societies_hub/features/feed/screens/feed_screen.dart';
 import 'package:fccu_societies_hub/features/posts/screens/post_details_screen.dart';
+import 'package:fccu_societies_hub/features/events/screens/edit_event_screen.dart';
 import 'package:fccu_societies_hub/features/notifications/screens/notifications_screen.dart';
+import 'package:fccu_societies_hub/features/posts/screens/edit_post_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/edit_profile_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/profile_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/settings_screen.dart';
@@ -72,6 +74,8 @@ class AppRoutes {
   static const editProfile = '/edit-profile';
   static const settings = '/settings';
   static const notifications = '/notifications';
+  static const editPost = AppRoute('/edit-post', ['id']);
+  static const editEvent = AppRoute('/edit-event', ['id']);
 
   static const _authRoutes = [welcome, login, register];
 
@@ -165,6 +169,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: AppRoutes.editProfile, builder: (_, _) => const EditProfileScreen()),
       GoRoute(path: AppRoutes.settings, builder: (_, _) => const SettingsScreen()),
       GoRoute(path: AppRoutes.notifications, builder: (_, _) => const NotificationsScreen()),
+      GoRoute(
+        path: AppRoutes.editPost.asRoute(),
+        builder: (_, state) => EditPostScreen(postId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: AppRoutes.editEvent.asRoute(),
+        builder: (_, state) => EditEventScreen(eventId: state.pathParameters['id']!),
+      ),
     ],
   );
 });

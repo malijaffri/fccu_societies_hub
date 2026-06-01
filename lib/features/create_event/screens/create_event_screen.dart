@@ -117,7 +117,11 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       final user = await ref.read(currentUserModelProvider.future);
       if (user == null) throw Exception('User profile not found. Please try signing out and back in.');
 
-      final event = Event(
+      final eventRepo = ref.read(eventRepositoryProvider);
+      final postRepo = ref.read(postRepositoryProvider);
+
+      // 1. Create the event and get its real Firestore ID
+      final eventId = await eventRepo.createEvent(Event(
         id: '',
         societyId: _selectedSocietyId!,
         societyName: _selectedSocietyName!,
@@ -127,13 +131,11 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         end: _endsAt,
         location: _locationController.text.trim().isEmpty ? null : _locationController.text.trim(),
         createdAt: DateTime.now(),
-      );
+      ));
 
-      await ref.read(eventRepositoryProvider).createEvent(event);
-
-      // Optionally create an accompanying post
+      // 2. Optionally create a companion post that references the event
       if (_alsoCreatePost && _linkedPostController.text.trim().isNotEmpty) {
-        final post = Post(
+        final postId = await postRepo.createPost(Post(
           id: '',
           societyId: _selectedSocietyId!,
           societyName: _selectedSocietyName!,
@@ -149,8 +151,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           likeCount: 0,
           commentCount: 0,
           createdAt: DateTime.now(),
-        );
-        await ref.read(postRepositoryProvider).createPost(post);
+          eventId: eventId,
+        ));
+
+        // 3. Write the reverse link back onto the event
+        await eventRepo.updateEventField(eventId, {'linkedPostId': postId});
+
         ref.invalidate(postsProvider);
         ref.invalidate(feedProvider);
       }

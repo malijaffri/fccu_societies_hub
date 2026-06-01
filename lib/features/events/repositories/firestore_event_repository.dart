@@ -61,10 +61,15 @@ class FirestoreEventRepository implements EventRepository {
   }
 
   @override
-  Future<void> createEvent(Event event) async {
+  Future<String> createEvent(Event event) async {
     final doc = _db.collection('events').doc();
     await doc.set(event.copyWith(id: doc.id).toMap());
+    return doc.id;
   }
+
+  @override
+  Future<void> updateEventField(String eventId, Map<String, dynamic> fields) async =>
+      _db.collection('events').doc(eventId).update(fields);
 
   @override
   Future<void> updateEvent(Event event) async =>

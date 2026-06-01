@@ -62,6 +62,11 @@
     </application>
 
     <queries>
+        <!-- url_launcher: required on Android 11+ to open https:// URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

@@ -26,7 +26,14 @@ class MockEventRepository implements EventRepository {
   }
 
   @override
-  Future<void> createEvent(Event event) async => Future.delayed(const Duration(seconds: 1));
+  Future<String> createEvent(Event event) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return 'mock_event_id';
+  }
+
+  @override
+  Future<void> updateEventField(String eventId, Map<String, dynamic> fields) async =>
+      Future.delayed(const Duration(milliseconds: 300));
 
   @override
   Future<void> updateEvent(Event event) async => Future.delayed(const Duration(seconds: 1));

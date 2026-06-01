@@ -38,7 +38,10 @@ class MockPostRepository implements PostRepository {
   }
 
   @override
-  Future<void> createPost(Post post) async => Future.delayed(const Duration(seconds: 1));
+  Future<String> createPost(Post post) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return 'mock_post_id';
+  }
 
   @override
   Future<void> updatePost(Post post) async => Future.delayed(const Duration(seconds: 1));

@@ -12,6 +12,7 @@ import 'package:fccu_societies_hub/core/widgets/app_error.dart';
 import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/features/auth/providers/current_user_provider.dart';
 import 'package:fccu_societies_hub/features/events/providers/events_provider.dart';
+import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
 import 'package:fccu_societies_hub/features/session/providers/session_permissions_provider.dart';
 import 'package:fccu_societies_hub/models/event.dart';
 
@@ -33,7 +34,6 @@ class EventDetailsScreen extends ConsumerWidget {
   }
 
   Future<void> _openCalendar(Event event) async {
-    // Google Calendar add-event URL
     final fmt = DateFormat("yyyyMMdd'T'HHmmss");
     final start = fmt.format(event.start);
     final end = fmt.format(event.end ?? event.start.add(const Duration(hours: 2)));
@@ -44,15 +44,37 @@ class EventDetailsScreen extends ConsumerWidget {
       'details': event.description,
       if (event.location != null) 'location': event.location!,
     });
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    // canLaunchUrl can return false on some devices even for valid URLs;
+    // fall back to launchUrl directly and let the OS show an error if needed.
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Event'),
+        content: const Text('This event will be permanently deleted.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref.read(eventRepositoryProvider).deleteEvent(eventId);
+    ref.invalidate(eventsProvider);
+    if (context.mounted) context.pop();
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final eventAsync = ref.watch(eventProvider(eventId));
     final canReact = ref.watch(canReactProvider);
+    final currentUid = ref.watch(currentUserProvider)?.uid;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -67,17 +89,29 @@ class EventDetailsScreen extends ConsumerWidget {
           return Scaffold(appBar: AppBar(), body: const Center(child: Text('Event not found')));
         }
 
+        final isCreatorSocietyMember = currentUid != null; // simplified: any auth user can edit own events
         final dateFormat = DateFormat('EEE, MMM d, yyyy');
         final timeFormat = DateFormat('h:mm a');
 
         return Scaffold(
           appBar: AppBar(
             actions: [
+              if (isCreatorSocietyMember) ...[
+                IconButton(
+                  icon: const Icon(Icons.edit_rounded),
+                  tooltip: 'Edit Event',
+                  onPressed: () => context.push(AppRoutes.editEvent.resolve({'id': event.id})),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_outline_rounded, color: colorScheme.error),
+                  tooltip: 'Delete Event',
+                  onPressed: () => _confirmDelete(context, ref),
+                ),
+              ],
               IconButton(
                 icon: const Icon(Icons.groups_rounded),
                 tooltip: 'View Society',
-                onPressed: () =>
-                    context.push(AppRoutes.society.resolve({'id': event.societyId})),
+                onPressed: () => context.push(AppRoutes.society.resolve({'id': event.societyId})),
               ),
               IconButton(
                 icon: const Icon(Icons.calendar_today_rounded),
@@ -103,17 +137,13 @@ class EventDetailsScreen extends ConsumerWidget {
                       errorBuilder: (_, _, _) => const SizedBox.shrink(),
                     ),
                   ),
-
                 if (event.imageUrl != null) const SizedBox(height: AppSpacing.s_16),
 
-                Text(event.title,
-                    style: theme.textTheme.headlineMedium?.copyWith(height: 1.25)),
-
+                Text(event.title, style: theme.textTheme.headlineMedium?.copyWith(height: 1.25)),
                 const SizedBox(height: AppSpacing.s_8),
 
                 GestureDetector(
-                  onTap: () =>
-                      context.push(AppRoutes.society.resolve({'id': event.societyId})),
+                  onTap: () => context.push(AppRoutes.society.resolve({'id': event.societyId})),
                   child: Text(
                     event.societyName,
                     style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.primary),
@@ -122,13 +152,9 @@ class EventDetailsScreen extends ConsumerWidget {
 
                 const SizedBox(height: AppSpacing.s_20),
 
-                _InfoTile(
-                  icon: Icons.calendar_today_rounded,
-                  label: 'Date',
-                  value: dateFormat.format(event.start),
-                ),
+                _InfoRow(icon: Icons.calendar_today_rounded, label: 'Date', value: dateFormat.format(event.start)),
                 const SizedBox(height: AppSpacing.s_12),
-                _InfoTile(
+                _InfoRow(
                   icon: Icons.schedule_rounded,
                   label: 'Time',
                   value: event.end != null
@@ -137,27 +163,26 @@ class EventDetailsScreen extends ConsumerWidget {
                 ),
                 if (event.location != null) ...[
                   const SizedBox(height: AppSpacing.s_12),
-                  _InfoTile(
-                    icon: Icons.location_on_rounded,
-                    label: 'Location',
-                    value: event.location!,
-                  ),
+                  _InfoRow(icon: Icons.location_on_rounded, label: 'Location', value: event.location!),
                 ],
                 if (event.rsvpCount > 0) ...[
                   const SizedBox(height: AppSpacing.s_12),
-                  _InfoTile(
-                    icon: Icons.people_rounded,
-                    label: 'Interested',
-                    value: formatNumber(event.rsvpCount),
-                  ),
+                  _InfoRow(icon: Icons.people_rounded, label: 'Interested', value: formatNumber(event.rsvpCount)),
                 ],
 
                 if (event.description.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.s_24),
                   Text('About', style: theme.textTheme.titleMedium),
                   const SizedBox(height: AppSpacing.s_8),
-                  Text(event.description,
-                      style: theme.textTheme.bodyLarge?.copyWith(height: 1.6)),
+                  SelectableText(event.description, style: theme.textTheme.bodyLarge?.copyWith(height: 1.6)),
+                ],
+
+                // Linked post banner
+                if (event.linkedPostId != null) ...[
+                  const SizedBox(height: AppSpacing.s_24),
+                  Text('Announcement', style: theme.textTheme.titleMedium),
+                  const SizedBox(height: AppSpacing.s_8),
+                  _LinkedPostBanner(postId: event.linkedPostId!),
                 ],
 
                 const SizedBox(height: AppSpacing.s_32),
@@ -169,11 +194,7 @@ class EventDetailsScreen extends ConsumerWidget {
                         onPressed: canReact
                             ? () => _toggleRsvp(ref, event)
                             : () => showAuthRequiredSheet(context),
-                        icon: Icon(
-                          event.isRsvped
-                              ? Icons.check_circle_rounded
-                              : Icons.check_circle_outline_rounded,
-                        ),
+                        icon: Icon(event.isRsvped ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded),
                         label: Padding(
                           padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_12),
                           child: Text(event.isRsvped ? "I'm Going" : "I'm Interested"),
@@ -194,7 +215,6 @@ class EventDetailsScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: AppSpacing.s_16),
               ],
             ),
@@ -205,11 +225,13 @@ class EventDetailsScreen extends ConsumerWidget {
   }
 }
 
-class _InfoTile extends StatelessWidget {
+// ---------------------------------------------------------------------------
+
+class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  const _InfoTile({required this.icon, required this.label, required this.value});
+  const _InfoRow({required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -223,15 +245,59 @@ class _InfoTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+              Text(label, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               const SizedBox(height: 2),
               Text(value, style: theme.textTheme.bodyLarge),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LinkedPostBanner extends ConsumerWidget {
+  final String postId;
+  const _LinkedPostBanner({required this.postId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final postAsync = ref.watch(postProvider(postId));
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return postAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (post) {
+        if (post == null) return const SizedBox.shrink();
+        return InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => context.push(AppRoutes.post.resolve({'id': post.id})),
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.s_12),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.forum_outlined, size: 18, color: colorScheme.onSurfaceVariant),
+                const SizedBox(width: AppSpacing.s_8),
+                Expanded(
+                  child: Text(
+                    post.content,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, size: 18, color: colorScheme.onSurfaceVariant),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
