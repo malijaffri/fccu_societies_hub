@@ -77,7 +77,7 @@ flutter:
 
   assets:
     - assets/images/logo.png
-    - assets/images/logo-wordmark.jpg
+    - assets/images/logo-wordmark.png
 
 flutter_launcher_icons:
   android: true

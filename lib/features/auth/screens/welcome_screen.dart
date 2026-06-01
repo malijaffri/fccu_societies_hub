@@ -54,21 +54,14 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
                 children: [
                   // Brand logo — icon + wordmark
-                  Image.asset(
-                    'assets/images/logo-wordmark.jpg',
-                    width: 260,
-                    fit: BoxFit.contain,
-                  ),
+                  Image.asset('assets/images/logo-wordmark.png', width: 260, fit: BoxFit.contain),
 
                   const SizedBox(height: AppSpacing.s_12),
 
                   Text(
                     'Discover societies, stay updated with events, and connect with your campus community.',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      height: 1.45,
-                    ),
+                    style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant, height: 1.45),
                   ),
 
                   const SizedBox(height: AppSpacing.s_40),
@@ -91,21 +84,18 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: AppSpacing.s_24),
-
-                  TextButton(
-                    onPressed: _isGuestLoading ? null : _continueAsGuest,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_12),
-                      child: _isGuestLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Continue as Guest'),
-                    ),
-                  ),
+                  // TODO
+                  // const SizedBox(height: AppSpacing.s_24),
+                  //
+                  // TextButton(
+                  //   onPressed: _isGuestLoading ? null : _continueAsGuest,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_12),
+                  //     child: _isGuestLoading
+                  //         ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  //         : const Text('Continue as Guest'),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

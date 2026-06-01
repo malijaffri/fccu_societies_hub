@@ -13,20 +13,20 @@ abstract final class AppColors {
   ///
   /// LIGHT
   ///
-  static const lightBackground = Color(0xFFF6FBF8);
+  static const lightBackground = Color(0xFFF3FCF7);
 
-  static const lightSurface = Colors.white;
+  static const lightSurface = Color(0xFFFFFFFF);
 
-  static const lightBorder = Color(0xFFD7EADD);
+  static const lightBorder = Color(0xFFC9E6D7);
 
   ///
   /// DARK
   ///
-  static const darkBackground = Color(0xFF0F1513);
+  static const darkBackground = Color(0xFF0D1916);
 
-  static const darkSurface = Color(0xFF18201D);
+  static const darkSurface = Color(0xFF142521);
 
-  static const darkBorder = Color(0xFF2B3C35);
+  static const darkBorder = Color(0xFF2A5147);
 
   ///
   /// FEEDBACK
