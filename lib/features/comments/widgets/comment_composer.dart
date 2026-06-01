@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
-import 'package:fccu_societies_hub/features/comments/repositories/comment_repository.dart';
 import 'package:fccu_societies_hub/features/comments/providers/comments_provider.dart';
 import 'package:fccu_societies_hub/features/users/providers/current_user_model_provider.dart';
 import 'package:fccu_societies_hub/models/comment.dart';
@@ -40,7 +39,7 @@ class _CommentComposerState extends ConsumerState<CommentComposer> {
     setState(() => _isSubmitting = true);
 
     try {
-      final user = ref.read(currentUserModelProvider).value;
+      final user = await ref.read(currentUserModelProvider.future);
       if (user == null) return;
 
       final comment = Comment(

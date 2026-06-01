@@ -8,10 +8,11 @@ class Society extends Equatable {
   final String? imageUrl;
   final String? description;
 
-  final List<String> followerIds;
-  final List<String> memberIds;
   final int followerCount;
   final int memberCount;
+
+  // These are NOT stored in the Firestore document.
+  // They are computed by the repository from the follows/memberships collections.
   final bool isFollowed;
   final bool isMember;
 
@@ -22,8 +23,6 @@ class Society extends Equatable {
     required this.name,
     this.imageUrl,
     this.description,
-    required this.followerIds,
-    required this.memberIds,
     required this.followerCount,
     required this.memberCount,
     required this.isFollowed,
@@ -31,31 +30,23 @@ class Society extends Equatable {
     required this.createdAt,
   });
 
-  factory Society.fromMap(Map<String, dynamic> map, {String? currentUserId}) {
-    final followerIds = List<String>.from(map['followerIds'] ?? []);
-    final memberIds = List<String>.from(map['memberIds'] ?? []);
-    return Society(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      imageUrl: map['imageUrl'] as String?,
-      description: map['description'] as String?,
-      followerIds: followerIds,
-      memberIds: memberIds,
-      followerCount: followerIds.length,
-      memberCount: memberIds.length,
-      isFollowed: currentUserId != null && followerIds.contains(currentUserId),
-      isMember: currentUserId != null && memberIds.contains(currentUserId),
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-    );
-  }
+  factory Society.fromMap(Map<String, dynamic> map) => Society(
+    id: map['id'] as String,
+    name: map['name'] as String,
+    imageUrl: map['imageUrl'] as String?,
+    description: map['description'] as String?,
+    followerCount: map['followerCount'] as int? ?? 0,
+    memberCount: map['memberCount'] as int? ?? 0,
+    isFollowed: false,
+    isMember: false,
+    createdAt: (map['createdAt'] as Timestamp).toDate(),
+  );
 
   Map<String, dynamic> toMap() => {
     'id': id,
     'name': name,
     'imageUrl': imageUrl,
     'description': description,
-    'followerIds': followerIds,
-    'memberIds': memberIds,
     'followerCount': followerCount,
     'memberCount': memberCount,
     'createdAt': Timestamp.fromDate(createdAt),
@@ -67,8 +58,6 @@ class Society extends Equatable {
     String? name,
     String? imageUrl,
     String? description,
-    List<String>? followerIds,
-    List<String>? memberIds,
     int? followerCount,
     int? memberCount,
     bool? isFollowed,
@@ -79,8 +68,6 @@ class Society extends Equatable {
     name: name ?? this.name,
     imageUrl: imageUrl ?? this.imageUrl,
     description: description ?? this.description,
-    followerIds: followerIds ?? this.followerIds,
-    memberIds: memberIds ?? this.memberIds,
     followerCount: followerCount ?? this.followerCount,
     memberCount: memberCount ?? this.memberCount,
     isFollowed: isFollowed ?? this.isFollowed,

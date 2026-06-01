@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fccu_societies_hub/features/users/repositories/firestore_user_repository.dart';
-import 'package:fccu_societies_hub/features/users/repositories/mock_user_repository.dart';
 import 'package:fccu_societies_hub/features/users/repositories/user_repository.dart';
 import 'package:fccu_societies_hub/models/user_model.dart';
 

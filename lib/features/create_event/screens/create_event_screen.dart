@@ -114,8 +114,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      final user = ref.read(currentUserModelProvider).value;
-      if (user == null) throw Exception('Not authenticated');
+      final user = await ref.read(currentUserModelProvider.future);
+      if (user == null) throw Exception('User profile not found. Please try signing out and back in.');
 
       final event = Event(
         id: '',

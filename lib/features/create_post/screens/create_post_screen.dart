@@ -86,11 +86,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
             .toList(),
       );
 
-      final user = ref.read(currentUserModelProvider).value;
-      // final user = FirebaseAuth.instance.currentUser;
+      final user = await ref.read(currentUserModelProvider.future);
 
       if (user == null) {
-        throw Exception('Not authenticated');
+        throw Exception('User profile not found. Please try signing out and back in.');
       }
 
       final post = Post(

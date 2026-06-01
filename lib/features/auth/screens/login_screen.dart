@@ -9,6 +9,7 @@ import 'package:fccu_societies_hub/features/auth/providers/auth_repository_provi
 import 'package:fccu_societies_hub/features/auth/providers/user_provisioning_provider.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_error_message.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_validators.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_repository_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -19,29 +20,23 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _emailController = TextEditingController();
-
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-
   bool _obscurePassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
   Future<void> _login() async {
     FocusScope.of(context).unfocus();
 
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
@@ -52,23 +47,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       await ref.read(userProvisioningProvider).provisionUser(credential.user!);
 
+      // Clear any leftover guest flag from a previous guest session.
+      await ref.read(sessionRepositoryProvider).clearGuestMode();
+
       TextInput.finishAutofillContext();
 
-      if (!mounted) {
-        return;
-      }
-
-      context.go(AppRoutes.homeFeed);
+      // RouterNotifier detects the Firebase Auth state change and redirects
+      // away from /login automatically — no context.go() needed.
     } catch (error) {
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(authErrorMessage(error))));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authErrorMessage(error))),
+      );
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -79,10 +71,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     body: SafeArea(
       child: Center(
         child: SingleChildScrollView(
-          padding: const .all(AppSpacing.s_24),
+          padding: const EdgeInsets.all(AppSpacing.s_24),
 
           child: ConstrainedBox(
-            constraints: const .new(maxWidth: 420),
+            constraints: const BoxConstraints(maxWidth: 420),
 
             child: Form(
               key: _formKey,
@@ -94,9 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Text(
                       'Sign In',
-
                       textAlign: TextAlign.center,
-
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
                     ),
 
@@ -104,13 +94,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     TextFormField(
                       controller: _emailController,
-
-                      keyboardType: .emailAddress,
-
+                      keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
-
-                      decoration: const .new(labelText: 'Email'),
-
+                      decoration: const InputDecoration(labelText: 'Email'),
                       validator: emailValidator(),
                     ),
 
@@ -118,23 +104,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     TextFormField(
                       controller: _passwordController,
-
                       obscureText: _obscurePassword,
-
                       autofillHints: const [AutofillHints.password],
-
-                      decoration: .new(
+                      decoration: InputDecoration(
                         labelText: 'Password',
-
                         suffixIcon: IconButton(
                           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-
                           icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
                         ),
                       ),
-
                       onEditingComplete: () => TextInput.finishAutofillContext(),
-
                       validator: passwordValidator(),
                     ),
 
@@ -142,10 +121,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     FilledButton(
                       onPressed: _isLoading ? null : _login,
-
                       child: Padding(
-                        padding: const .symmetric(vertical: AppSpacing.s_12),
-
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_12),
                         child: _isLoading
                             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                             : const Text('Login'),
@@ -156,7 +133,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     TextButton(
                       onPressed: () => context.replace(AppRoutes.register),
-
                       child: const Text('Create an account'),
                     ),
                   ],

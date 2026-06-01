@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_mode_provider.dart';
 import 'package:fccu_societies_hub/features/session/providers/session_repository_provider.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
@@ -14,31 +15,24 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 }
 
 class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
-  bool _isLoading = false;
+  bool _isGuestLoading = false;
 
-  Future<void> _guest() async {
-    FocusScope.of(context).unfocus();
-
-    setState(() => _isLoading = true);
+  Future<void> _continueAsGuest() async {
+    setState(() => _isGuestLoading = true);
 
     try {
       await ref.read(sessionRepositoryProvider).setGuestMode();
 
-      if (!mounted) {
-        return;
-      }
-
-      context.go(AppRoutes.homeFeed);
+      // Invalidate the session provider so it re-reads SharedPreferences.
+      // RouterNotifier listens to sessionModeProvider and will call
+      // notifyListeners(), causing GoRouter to re-evaluate the redirect.
+      // The redirect sends guests from /welcome → / automatically.
+      ref.invalidate(sessionModeProvider);
     } catch (error) {
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(error.toString())));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.toString())));
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isGuestLoading = false);
     }
   }
 
@@ -51,31 +45,32 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const .all(AppSpacing.s_24),
+            padding: const EdgeInsets.all(AppSpacing.s_24),
 
             child: ConstrainedBox(
-              constraints: const .new(maxWidth: 420),
+              constraints: const BoxConstraints(maxWidth: 420),
 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
 
                 children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-
-                    decoration: BoxDecoration(color: colorScheme.primaryContainer, shape: .circle),
-
-                    child: Icon(Icons.groups_rounded, size: 48, color: colorScheme.onPrimaryContainer),
+                  Center(
+                    child: Container(
+                      width: 96,
+                      height: 96,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.groups_rounded, size: 48, color: colorScheme.onPrimaryContainer),
+                    ),
                   ),
 
                   const SizedBox(height: AppSpacing.s_32),
 
                   Text(
                     'FCCU Societies Hub',
-
                     textAlign: TextAlign.center,
-
                     style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
 
@@ -83,20 +78,19 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
                   Text(
                     'Discover societies, stay updated with events, and connect with your campus community.',
-
                     textAlign: TextAlign.center,
-
-                    style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant, height: 1.45),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      height: 1.45,
+                    ),
                   ),
 
                   const SizedBox(height: AppSpacing.s_40),
 
                   FilledButton(
                     onPressed: () => context.push(AppRoutes.register),
-
                     child: const Padding(
-                      padding: .symmetric(vertical: AppSpacing.s_14),
-
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.s_14),
                       child: Text('Create Account'),
                     ),
                   ),
@@ -105,27 +99,27 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
                   OutlinedButton(
                     onPressed: () => context.push(AppRoutes.login),
-
                     child: const Padding(
-                      padding: .symmetric(vertical: AppSpacing.s_14),
-
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.s_14),
                       child: Text('Login'),
                     ),
                   ),
 
-                  // const SizedBox(height: AppSpacing.s_24),
-                  //
-                  // TextButton(
-                  //   onPressed: _isLoading ? null : _guest,
-                  //
-                  //   child: Padding(
-                  //     padding: const .symmetric(vertical: AppSpacing.s_12),
-                  //
-                  //     child: _isLoading
-                  //         ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  //         : const Text('Continue as Guest'),
-                  //   ),
-                  // ),
+                  const SizedBox(height: AppSpacing.s_24),
+
+                  TextButton(
+                    onPressed: _isGuestLoading ? null : _continueAsGuest,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_12),
+                      child: _isGuestLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Continue as Guest'),
+                    ),
+                  ),
                 ],
               ),
             ),

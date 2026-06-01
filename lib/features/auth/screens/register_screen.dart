@@ -9,6 +9,7 @@ import 'package:fccu_societies_hub/features/auth/providers/auth_repository_provi
 import 'package:fccu_societies_hub/features/auth/providers/user_provisioning_provider.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_error_message.dart';
 import 'package:fccu_societies_hub/features/auth/utils/auth_validators.dart';
+import 'package:fccu_societies_hub/features/session/providers/session_repository_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -38,9 +39,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _register() async {
     FocusScope.of(context).unfocus();
 
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
@@ -53,23 +52,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           .read(userProvisioningProvider)
           .provisionUser(credential.user!, displayName: _nameController.text.trim());
 
+      // Clear any leftover guest flag from a previous guest session.
+      await ref.read(sessionRepositoryProvider).clearGuestMode();
+
       TextInput.finishAutofillContext();
 
-      if (!mounted) {
-        return;
-      }
-
-      context.go(AppRoutes.homeFeed);
+      // RouterNotifier detects the Firebase Auth state change and redirects
+      // away from /register automatically — no context.go() needed.
     } catch (error) {
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authErrorMessage(error))));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authErrorMessage(error))),
+      );
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
