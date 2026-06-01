@@ -3,6 +3,8 @@ import 'package:fccu_societies_hub/models/event.dart';
 abstract class EventRepository {
   Future<List<Event>> fetchEvents();
 
+  Future<List<Event>> fetchEventsBySociety(String societyId);
+
   Future<Event?> getEvent(String eventId);
 
   Future<void> createEvent(Event event);

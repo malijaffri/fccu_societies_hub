@@ -8,7 +8,7 @@ import 'package:fccu_societies_hub/features/auth/screens/welcome_screen.dart';
 import 'package:fccu_societies_hub/features/create_event/screens/create_event_screen.dart';
 import 'package:fccu_societies_hub/features/create_post/screens/create_post_screen.dart';
 import 'package:fccu_societies_hub/features/events/screens/events_screen.dart';
-import 'package:fccu_societies_hub/features/events/widgets/event_card.dart';
+import 'package:fccu_societies_hub/features/events/screens/event_details_screen.dart';
 import 'package:fccu_societies_hub/features/feed/screens/feed_screen.dart';
 import 'package:fccu_societies_hub/features/posts/screens/post_details_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/profile_screen.dart';
@@ -127,6 +127,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.society.asRoute(),
         builder: (context, state) => SocietyDetailsScreen(societyId: state.pathParameters['id']!),
+      ),
+
+      GoRoute(
+        path: AppRoutes.event.asRoute(),
+        builder: (context, state) => EventDetailsScreen(eventId: state.pathParameters['id']!),
       ),
 
       GoRoute(path: AppRoutes.createPost, builder: (context, state) => const CreatePostScreen()),

@@ -44,12 +44,12 @@ class _CommentComposerState extends ConsumerState<CommentComposer> {
       if (user == null) return;
 
       final comment = Comment(
-        id: DateTime.now().toString(),
+        id: '',
         postId: widget.postId!,
         userId: user.id,
         userName: user.name,
-        userAvatarUrl: user.avatarUrl,
-        text: _controller.text,
+        userAvatar: user.avatarUrl,
+        content: _controller.text.trim(),
         createdAt: DateTime.now(),
       );
 

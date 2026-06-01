@@ -14,13 +14,20 @@ class FirestoreEventRepository implements EventRepository {
   }
 
   @override
+  Future<List<Event>> fetchEventsBySociety(String societyId) async {
+    final snapshot = await _db
+        .collection('events')
+        .where('societyId', isEqualTo: societyId)
+        .orderBy('start', descending: false)
+        .limit(20)
+        .get();
+    return snapshot.docs.map((d) => Event.fromMap(d.data())).toList();
+  }
+
+  @override
   Future<Event?> getEvent(String eventId) async {
     final doc = await _db.collection('events').doc(eventId).get();
-
-    if (!doc.exists) {
-      throw Exception('Event not found');
-    }
-
+    if (!doc.exists) return null;
     return Event.fromMap(doc.data()!);
   }
 

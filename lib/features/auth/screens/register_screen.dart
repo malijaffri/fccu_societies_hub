@@ -20,19 +20,18 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-
   bool _obscurePassword = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
@@ -50,7 +49,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           .read(authRepositoryProvider)
           .register(email: _emailController.text.trim(), password: _passwordController.text);
 
-      await ref.read(userProvisioningProvider).provisionUser(credential.user!);
+      await ref
+          .read(userProvisioningProvider)
+          .provisionUser(credential.user!, displayName: _nameController.text.trim());
 
       TextInput.finishAutofillContext();
 
@@ -64,7 +65,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(authErrorMessage(error))));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authErrorMessage(error))));
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -79,10 +80,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     body: SafeArea(
       child: Center(
         child: SingleChildScrollView(
-          padding: const .all(AppSpacing.s_24),
+          padding: const EdgeInsets.all(AppSpacing.s_24),
 
           child: ConstrainedBox(
-            constraints: const .new(maxWidth: 420),
+            constraints: const BoxConstraints(maxWidth: 420),
 
             child: Form(
               key: _formKey,
@@ -94,23 +95,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   children: [
                     Text(
                       'Create Account',
-
                       textAlign: TextAlign.center,
-
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
                     ),
 
                     const SizedBox(height: AppSpacing.s_32),
 
                     TextFormField(
+                      controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      textCapitalization: TextCapitalization.words,
+                      autofillHints: const [AutofillHints.name],
+                      decoration: const InputDecoration(labelText: 'Full Name'),
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) return 'Please enter your name';
+                        if (v.trim().length < 2) return 'Name must be at least 2 characters';
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: AppSpacing.s_16),
+
+                    TextFormField(
                       controller: _emailController,
-
-                      keyboardType: .emailAddress,
-
+                      keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
-
-                      decoration: const .new(labelText: 'Email'),
-
+                      decoration: const InputDecoration(labelText: 'Email'),
                       validator: emailValidator(checkFormat: true),
                     ),
 
@@ -118,23 +128,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                     TextFormField(
                       controller: _passwordController,
-
                       obscureText: _obscurePassword,
-
-                      autofillHints: const [AutofillHints.password],
-
-                      decoration: .new(
+                      autofillHints: const [AutofillHints.newPassword],
+                      decoration: InputDecoration(
                         labelText: 'Password',
-
                         suffixIcon: IconButton(
                           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-
                           icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
                         ),
                       ),
-
                       onEditingComplete: () => TextInput.finishAutofillContext(),
-
                       validator: passwordValidator(checkFormat: true),
                     ),
 
@@ -142,10 +145,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                     FilledButton(
                       onPressed: _isLoading ? null : _register,
-
                       child: Padding(
-                        padding: const .symmetric(vertical: AppSpacing.s_12),
-
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s_12),
                         child: _isLoading
                             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                             : const Text('Register'),
@@ -156,7 +157,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                     TextButton(
                       onPressed: () => context.replace(AppRoutes.login),
-
                       child: const Text('Use existing account'),
                     ),
                   ],

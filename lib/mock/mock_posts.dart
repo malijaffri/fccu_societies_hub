@@ -21,6 +21,7 @@ final mockPosts =
               commentCount: i,
               isLiked: i % 3 == 0,
               createdAt: .now().subtract(.new(hours: i)),
+              likerIds: [],
             ),
           ),
         )

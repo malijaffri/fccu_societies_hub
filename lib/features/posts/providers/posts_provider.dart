@@ -1,17 +1,42 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:fccu_societies_hub/features/auth/providers/current_user_provider.dart';
 import 'package:fccu_societies_hub/features/posts/repositories/firestore_post_repository.dart';
-import 'package:fccu_societies_hub/features/posts/repositories/mock_post_repository.dart';
 import 'package:fccu_societies_hub/features/posts/repositories/post_repository.dart';
+import 'package:fccu_societies_hub/features/societies/providers/societies_provider.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
 final postRepositoryProvider = Provider<PostRepository>((ref) => FirestorePostRepository());
-// final postRepositoryProvider = Provider<PostRepository>((ref) => MockPostRepository());
 
-final feedProvider = FutureProvider<List<Post>>((ref) async => ref.watch(postRepositoryProvider).fetchFeed());
+final feedProvider = FutureProvider<List<Post>>((ref) async {
+  final currentUserId = ref.watch(currentUserProvider)?.uid;
+  final societies = await ref.watch(societiesProvider.future);
+  final followedIds = societies
+      .where((s) => s.isFollowed)
+      .map((s) => s.id)
+      .toList();
+  return ref
+      .watch(postRepositoryProvider)
+      .fetchFeed(currentUserId: currentUserId, followedSocietyIds: followedIds);
+});
 
-final postsProvider = FutureProvider<List<Post>>((ref) async => ref.watch(postRepositoryProvider).fetchPosts());
+final postsProvider = FutureProvider<List<Post>>((ref) async {
+  final currentUserId = ref.watch(currentUserProvider)?.uid;
+  return ref.watch(postRepositoryProvider).fetchPosts(currentUserId: currentUserId);
+});
 
 final postProvider = FutureProvider.family<Post?, String>(
-  (ref, postId) async => ref.watch(postRepositoryProvider).getPost(postId),
+  (ref, postId) async {
+    final currentUserId = ref.watch(currentUserProvider)?.uid;
+    return ref.watch(postRepositoryProvider).getPost(postId, currentUserId: currentUserId);
+  },
+);
+
+final societyPostsProvider = FutureProvider.family<List<Post>, String>(
+  (ref, societyId) async {
+    final currentUserId = ref.watch(currentUserProvider)?.uid;
+    return ref
+        .watch(postRepositoryProvider)
+        .fetchPostsBySociety(societyId, currentUserId: currentUserId);
+  },
 );

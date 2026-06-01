@@ -26,9 +26,7 @@ class FirestoreUserRepository implements UserRepository {
 
   @override
   Future<void> createUser(UserModel user) async {
-    final doc = _db.collection('users').doc();
-
-    await doc.set(user.copyWith(id: doc.id).toMap());
+    await _db.collection('users').doc(user.id).set(user.toMap());
   }
 
   @override

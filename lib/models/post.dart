@@ -19,6 +19,7 @@ class Post extends Equatable {
 
   final List<Media> media;
 
+  final List<String> likerIds;
   final int likeCount;
   final int commentCount;
   final bool isLiked;
@@ -38,6 +39,7 @@ class Post extends Equatable {
     this.authorAvatarUrl,
     required this.content,
     required this.media,
+    required this.likerIds,
     required this.likeCount,
     required this.commentCount,
     required this.isLiked,
@@ -45,39 +47,44 @@ class Post extends Equatable {
     this.eventId,
   });
 
-  factory Post.fromMap(Map<String, dynamic> map) => Post(
-    id: map['id'],
-    societyId: map['societyId'],
-    societyName: map['societyName'],
-    societyImage: map['societyImage'],
-    isFollowed: map['isFollowed'],
-    authorId: map['authorId'],
-    authorName: map['authorName'],
-    authorAvatarUrl: map['authorAvatarUrl'],
-    content: map['content'],
-    media: (map['media'] as List<Map<String, dynamic>>).map((e) => Media.fromMap(e)).toList(),
-    likeCount: map['likeCount'],
-    commentCount: map['commentCount'],
-    createdAt: (map['createdAt'] as Timestamp).toDate(),
-    isLiked: map['isLiked'],
-    eventId: map['eventId'],
-  );
+  factory Post.fromMap(Map<String, dynamic> map, {String? currentUserId}) {
+    final likerIds = List<String>.from(map['likerIds'] ?? []);
+    return Post(
+      id: map['id'] as String,
+      societyId: map['societyId'] as String,
+      societyName: map['societyName'] as String,
+      societyImage: map['societyImage'] as String?,
+      isFollowed: false,
+      authorId: map['authorId'] as String,
+      authorName: map['authorName'] as String,
+      authorAvatarUrl: map['authorAvatarUrl'] as String?,
+      content: map['content'] as String,
+      media: (map['media'] as List<dynamic>? ?? [])
+          .map((e) => Media.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      likerIds: likerIds,
+      likeCount: likerIds.length,
+      commentCount: map['commentCount'] as int? ?? 0,
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      isLiked: currentUserId != null && likerIds.contains(currentUserId),
+      eventId: map['eventId'] as String?,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
     'id': id,
     'societyId': societyId,
     'societyName': societyName,
     'societyImage': societyImage,
-    'isFollowed': isFollowed,
     'authorId': authorId,
     'authorName': authorName,
     'authorAvatarUrl': authorAvatarUrl,
     'createdAt': Timestamp.fromDate(createdAt),
     'content': content,
-    'media': media,
+    'media': media.map((m) => m.toMap()).toList(),
+    'likerIds': likerIds,
     'likeCount': likeCount,
     'commentCount': commentCount,
-    'isLiked': isLiked,
     'eventId': eventId,
   };
 
@@ -93,6 +100,7 @@ class Post extends Equatable {
     String? authorAvatarUrl,
     String? content,
     List<Media>? media,
+    List<String>? likerIds,
     int? likeCount,
     int? commentCount,
     bool? isLiked,
@@ -109,6 +117,7 @@ class Post extends Equatable {
     authorAvatarUrl: authorAvatarUrl ?? this.authorAvatarUrl,
     content: content ?? this.content,
     media: media ?? this.media,
+    likerIds: likerIds ?? this.likerIds,
     likeCount: likeCount ?? this.likeCount,
     commentCount: commentCount ?? this.commentCount,
     isLiked: isLiked ?? this.isLiked,

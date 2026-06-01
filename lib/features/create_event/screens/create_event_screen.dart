@@ -9,7 +9,12 @@ import 'package:fccu_societies_hub/features/create_event/widgets/event_location_
 import 'package:fccu_societies_hub/features/create_event/widgets/linked_post_toggle.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/post_composer_field.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/society_selector.dart';
+import 'package:fccu_societies_hub/features/events/providers/events_provider.dart';
+import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
 import 'package:fccu_societies_hub/features/societies/providers/societies_provider.dart';
+import 'package:fccu_societies_hub/features/users/providers/current_user_model_provider.dart';
+import 'package:fccu_societies_hub/models/event.dart';
+import 'package:fccu_societies_hub/models/post.dart';
 
 class CreateEventScreen extends ConsumerStatefulWidget {
   const CreateEventScreen({super.key});
@@ -20,20 +25,18 @@ class CreateEventScreen extends ConsumerStatefulWidget {
 
 class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   final _titleController = TextEditingController();
-
   final _descriptionController = TextEditingController();
-
   final _locationController = TextEditingController();
-
   final _linkedPostController = TextEditingController();
 
   String? _selectedSocietyId;
+  String? _selectedSocietyName;
+  String? _selectedSocietyImage;
 
   DateTime? _startsAt;
   DateTime? _endsAt;
 
   bool _alsoCreatePost = true;
-
   bool _isSubmitting = false;
 
   @override
@@ -42,7 +45,6 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     _descriptionController.dispose();
     _locationController.dispose();
     _linkedPostController.dispose();
-
     super.dispose();
   }
 
@@ -51,41 +53,28 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
     final pickedDate = await showDatePicker(
       context: context,
-
       initialDate: initial ?? now,
-
       firstDate: now.subtract(const Duration(days: 30)),
-
       lastDate: DateTime(now.year + 5),
     );
 
-    if (pickedDate == null || !mounted) {
-      return null;
-    }
+    if (pickedDate == null || !mounted) return null;
 
     final pickedTime = await showTimePicker(
       context: context,
-
       initialTime: initial != null ? TimeOfDay.fromDateTime(initial) : TimeOfDay.now(),
     );
 
-    if (pickedTime == null) {
-      return null;
-    }
+    if (pickedTime == null) return null;
 
     return DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
   }
 
   Future<void> _pickStartDateTime() async {
     final picked = await _pickDateTime(initial: _startsAt);
-
-    if (picked == null) {
-      return;
-    }
-
+    if (picked == null) return;
     setState(() {
       _startsAt = picked;
-
       if (_endsAt != null && _endsAt!.isBefore(picked)) {
         _endsAt = picked.add(const Duration(hours: 2));
       }
@@ -95,11 +84,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   Future<void> _pickEndDateTime() async {
     final initial = _endsAt ?? _startsAt?.add(const Duration(hours: 2));
     final picked = await _pickDateTime(initial: initial);
-
-    if (picked == null) {
-      return;
-    }
-
+    if (picked == null) return;
     setState(() => _endsAt = picked);
   }
 
@@ -108,40 +93,81 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
     if (_selectedSocietyId == null) {
       _showError('Please select a society.');
-
       return;
     }
 
     if (_titleController.text.trim().isEmpty) {
       _showError('Please enter an event title.');
-
       return;
     }
 
-    if (_startsAt == null || _endsAt == null) {
-      _showError('Please select start and end times.');
-
+    if (_startsAt == null) {
+      _showError('Please select a start time.');
       return;
     }
 
-    if (_startsAt!.isAfter(_endsAt!)) {
+    if (_endsAt != null && _startsAt!.isAfter(_endsAt!)) {
       _showError('Event cannot end before it starts.');
-
       return;
     }
 
     setState(() => _isSubmitting = true);
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final user = ref.read(currentUserModelProvider).value;
+      if (user == null) throw Exception('Not authenticated');
 
-    if (!mounted) {
-      return;
+      final event = Event(
+        id: '',
+        societyId: _selectedSocietyId!,
+        societyName: _selectedSocietyName!,
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        start: _startsAt!,
+        end: _endsAt,
+        location: _locationController.text.trim().isEmpty ? null : _locationController.text.trim(),
+        createdAt: DateTime.now(),
+      );
+
+      await ref.read(eventRepositoryProvider).createEvent(event);
+
+      // Optionally create an accompanying post
+      if (_alsoCreatePost && _linkedPostController.text.trim().isNotEmpty) {
+        final post = Post(
+          id: '',
+          societyId: _selectedSocietyId!,
+          societyName: _selectedSocietyName!,
+          societyImage: _selectedSocietyImage,
+          isFollowed: false,
+          isLiked: false,
+          authorId: user.id,
+          authorName: user.name,
+          authorAvatarUrl: user.avatarUrl,
+          content: _linkedPostController.text.trim(),
+          media: const [],
+          likerIds: const [],
+          likeCount: 0,
+          commentCount: 0,
+          createdAt: DateTime.now(),
+        );
+        await ref.read(postRepositoryProvider).createPost(post);
+        ref.invalidate(postsProvider);
+        ref.invalidate(feedProvider);
+      }
+
+      ref.invalidate(eventsProvider);
+
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      if (mounted) _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
-
-    Navigator.pop(context);
   }
 
-  void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  void _showError(String message) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 
   @override
   Widget build(BuildContext context) {
@@ -150,14 +176,11 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Event'),
-
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.s_8),
-
             child: TextButton(
               onPressed: _isSubmitting ? null : _submit,
-
               child: _isSubmitting
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Text('Create'),
@@ -170,30 +193,32 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         child: societiesAsync.when(
           data: (societies) => SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.s_16),
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-
               children: [
                 Text('Event Details', style: Theme.of(context).textTheme.titleLarge),
 
                 const SizedBox(height: AppSpacing.s_16),
 
                 SocietySelector(
-                  societies: societies.where((society) => society.isMember).toList(),
-
+                  societies: societies.where((s) => s.isMember).toList(),
                   value: _selectedSocietyId,
-
-                  onChanged: (value) => setState(() => _selectedSocietyId = value),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    final society = societies.firstWhere((s) => s.id == value);
+                    setState(() {
+                      _selectedSocietyId = value;
+                      _selectedSocietyName = society.name;
+                      _selectedSocietyImage = society.imageUrl;
+                    });
+                  },
                 ),
 
                 const SizedBox(height: AppSpacing.s_16),
 
                 TextField(
                   controller: _titleController,
-
                   textCapitalization: TextCapitalization.words,
-
                   decoration: const InputDecoration(labelText: 'Event Title', hintText: 'Flutter Workshop 2026'),
                 ),
 
@@ -201,12 +226,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
                 TextField(
                   controller: _descriptionController,
-
                   minLines: 4,
                   maxLines: null,
-
                   textCapitalization: TextCapitalization.sentences,
-
                   decoration: const InputDecoration(labelText: 'Description', alignLabelWithHint: true),
                 ),
 
@@ -215,9 +237,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 EventDateTimeSection(
                   startsAt: _startsAt,
                   endsAt: _endsAt,
-
                   onPickStart: _pickStartDateTime,
-
                   onPickEnd: _pickEndDateTime,
                 ),
 
@@ -227,11 +247,13 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
                 const SizedBox(height: AppSpacing.s_20),
 
-                LinkedPostToggle(value: _alsoCreatePost, onChanged: (value) => setState(() => _alsoCreatePost = value)),
+                LinkedPostToggle(
+                  value: _alsoCreatePost,
+                  onChanged: (value) => setState(() => _alsoCreatePost = value),
+                ),
 
                 if (_alsoCreatePost) ...[
                   const SizedBox(height: AppSpacing.s_16),
-
                   PostComposerField(controller: _linkedPostController),
                 ],
 

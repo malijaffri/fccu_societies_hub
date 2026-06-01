@@ -4,14 +4,14 @@ import 'package:fccu_societies_hub/models/society.dart';
 
 class MockSocietyRepository implements SocietyRepository {
   @override
-  Future<List<Society>> fetchSocieties() async {
+  Future<List<Society>> fetchSocieties({String? currentUserId}) async {
     await Future.delayed(const Duration(seconds: 1));
 
     return mockSocieties;
   }
 
   @override
-  Future<Society?> getSociety(String societyId) async {
+  Future<Society?> getSociety(String societyId, {String? currentUserId}) async {
     await Future.delayed(const Duration(seconds: 1));
 
     try {
@@ -29,4 +29,28 @@ class MockSocietyRepository implements SocietyRepository {
 
   @override
   Future<void> deleteSociety(String societyId) async => await Future.delayed(const Duration(seconds: 1));
+
+  @override
+  Future<void> followSociety(String societyId, String userId) {
+    // TODO: implement followSociety
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> joinSociety(String societyId, String userId) {
+    // TODO: implement joinSociety
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> leaveSociety(String societyId, String userId) {
+    // TODO: implement leaveSociety
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> unfollowSociety(String societyId, String userId) {
+    // TODO: implement unfollowSociety
+    throw UnimplementedError();
+  }
 }

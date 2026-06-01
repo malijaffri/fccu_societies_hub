@@ -29,4 +29,10 @@ class MockEventRepository implements EventRepository {
 
   @override
   Future<void> deleteEvent(String eventId) async => await Future.delayed(const Duration(seconds: 1));
+
+  @override
+  Future<List<Event>> fetchEventsBySociety(String societyId) {
+    // TODO: implement fetchEventsBySociety
+    throw UnimplementedError();
+  }
 }

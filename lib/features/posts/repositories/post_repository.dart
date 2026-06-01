@@ -1,15 +1,21 @@
 import 'package:fccu_societies_hub/models/post.dart';
 
 abstract class PostRepository {
-  Future<List<Post>> fetchPosts();
+  Future<List<Post>> fetchPosts({String? currentUserId});
 
-  Future<List<Post>> fetchFeed();
+  Future<List<Post>> fetchFeed({String? currentUserId, List<String>? followedSocietyIds});
 
-  Future<Post?> getPost(String postId);
+  Future<List<Post>> fetchPostsBySociety(String societyId, {String? currentUserId});
+
+  Future<Post?> getPost(String postId, {String? currentUserId});
 
   Future<void> createPost(Post post);
 
   Future<void> updatePost(Post post);
 
   Future<void> deletePost(String postId);
+
+  Future<void> likePost(String postId, String userId);
+
+  Future<void> unlikePost(String postId, String userId);
 }

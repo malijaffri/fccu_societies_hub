@@ -95,19 +95,20 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
       final post = Post(
         id: '',
-        isFollowed: false, // TODO
-        isLiked: false, // TODO
+        isFollowed: false,
+        isLiked: false,
         societyId: _selectedSocietyId!,
         societyName: _selectedSocietyName!,
-        societyImage: _selectedSocietyImage!,
+        societyImage: _selectedSocietyImage,
         authorId: user.id,
         authorName: user.name,
         authorAvatarUrl: user.avatarUrl,
         content: _contentController.text.trim(),
         media: media,
+        likerIds: const [],
         likeCount: 0,
         commentCount: 0,
-        createdAt: .now(),
+        createdAt: DateTime.now(),
       );
 
       await ref.read(postRepositoryProvider).createPost(post);

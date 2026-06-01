@@ -20,9 +20,13 @@ class FirestoreCommentRepository implements CommentRepository {
 
   @override
   Future<void> createComment(Comment comment) async {
+    final batch = _db.batch();
     final doc = _db.collection('comments').doc();
-
-    await doc.set(comment.copyWith(id: doc.id).toMap());
+    batch.set(doc, comment.copyWith(id: doc.id).toMap());
+    batch.update(_db.collection('posts').doc(comment.postId), {
+      'commentCount': FieldValue.increment(1),
+    });
+    await batch.commit();
   }
 
   @override
