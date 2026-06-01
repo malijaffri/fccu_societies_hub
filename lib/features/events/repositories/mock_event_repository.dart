@@ -4,35 +4,41 @@ import 'package:fccu_societies_hub/models/event.dart';
 
 class MockEventRepository implements EventRepository {
   @override
-  Future<List<Event>> fetchEvents() async {
+  Future<List<Event>> fetchEvents({String? currentUserId}) async {
     await Future.delayed(const Duration(seconds: 1));
-
     return mockEvents;
   }
 
   @override
-  Future<Event?> getEvent(String eventId) async {
+  Future<List<Event>> fetchEventsBySociety(String societyId, {String? currentUserId}) async {
     await Future.delayed(const Duration(seconds: 1));
+    return mockEvents.where((e) => e.societyId == societyId).toList();
+  }
 
+  @override
+  Future<Event?> getEvent(String eventId, {String? currentUserId}) async {
+    await Future.delayed(const Duration(seconds: 1));
     try {
-      return mockEvents.firstWhere((event) => event.id == eventId);
-    } catch (e) {
+      return mockEvents.firstWhere((e) => e.id == eventId);
+    } catch (_) {
       return null;
     }
   }
 
   @override
-  Future<void> createEvent(Event event) async => await Future.delayed(const Duration(seconds: 1));
+  Future<void> createEvent(Event event) async => Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<void> updateEvent(Event event) async => await Future.delayed(const Duration(seconds: 1));
+  Future<void> updateEvent(Event event) async => Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<void> deleteEvent(String eventId) async => await Future.delayed(const Duration(seconds: 1));
+  Future<void> deleteEvent(String eventId) async => Future.delayed(const Duration(seconds: 1));
 
   @override
-  Future<List<Event>> fetchEventsBySociety(String societyId) {
-    // TODO: implement fetchEventsBySociety
-    throw UnimplementedError();
-  }
+  Future<void> rsvpEvent(String eventId, String userId) async =>
+      Future.delayed(const Duration(milliseconds: 300));
+
+  @override
+  Future<void> unrsvpEvent(String eventId, String userId) async =>
+      Future.delayed(const Duration(milliseconds: 300));
 }

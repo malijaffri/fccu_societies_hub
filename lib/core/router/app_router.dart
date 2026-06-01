@@ -12,6 +12,8 @@ import 'package:fccu_societies_hub/features/events/screens/event_details_screen.
 import 'package:fccu_societies_hub/features/events/screens/events_screen.dart';
 import 'package:fccu_societies_hub/features/feed/screens/feed_screen.dart';
 import 'package:fccu_societies_hub/features/posts/screens/post_details_screen.dart';
+import 'package:fccu_societies_hub/features/notifications/screens/notifications_screen.dart';
+import 'package:fccu_societies_hub/features/profile/screens/edit_profile_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/profile_screen.dart';
 import 'package:fccu_societies_hub/features/profile/screens/settings_screen.dart';
 import 'package:fccu_societies_hub/features/search/screens/search_screen.dart';
@@ -30,8 +32,15 @@ class AppRoute {
   const AppRoute(this.routeBase, [this.expectedParams = const []]);
 
   String resolve([Map<String, String> params = const {}]) {
-    if (params.keys.toSet() != expectedParams.toSet()) {
-      throw ArgumentError('Passed parameters don\'t match required set');
+    // Dart Set.== is identity-based, not structural, so != always returns true
+    // for two separately-created Sets even with identical contents. Use
+    // containsAll both ways for correct structural comparison.
+    final given = params.keys.toSet();
+    final expected = expectedParams.toSet();
+    if (given.length != expected.length || !given.containsAll(expected)) {
+      throw ArgumentError(
+        'Passed parameters $given don\'t match required set $expected',
+      );
     }
     if (expectedParams.isEmpty) return routeBase;
     final joinedParams = expectedParams.map((p) => params[p]!).join('/');
@@ -60,7 +69,9 @@ class AppRoutes {
   static const createPost = '/create-post';
   static const createEvent = '/create-event';
   static const profile = '/profile';
+  static const editProfile = '/edit-profile';
   static const settings = '/settings';
+  static const notifications = '/notifications';
 
   static const _authRoutes = [welcome, login, register];
 
@@ -151,7 +162,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: AppRoutes.createPost, builder: (_, _) => const CreatePostScreen()),
       GoRoute(path: AppRoutes.createEvent, builder: (_, _) => const CreateEventScreen()),
       GoRoute(path: AppRoutes.profile, builder: (_, _) => const ProfileScreen()),
+      GoRoute(path: AppRoutes.editProfile, builder: (_, _) => const EditProfileScreen()),
       GoRoute(path: AppRoutes.settings, builder: (_, _) => const SettingsScreen()),
+      GoRoute(path: AppRoutes.notifications, builder: (_, _) => const NotificationsScreen()),
     ],
   );
 });

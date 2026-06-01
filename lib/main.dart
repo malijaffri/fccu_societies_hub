@@ -8,6 +8,8 @@ import 'package:fccu_societies_hub/core/router/app_router.dart';
 import 'package:fccu_societies_hub/core/theme/app_theme.dart';
 import 'package:fccu_societies_hub/core/timeago_messages/en_messages.dart';
 import 'package:fccu_societies_hub/core/timeago_messages/en_short_messages.dart';
+import 'package:fccu_societies_hub/features/notifications/services/fcm_service.dart';
+import 'package:fccu_societies_hub/features/settings/providers/app_settings_provider.dart';
 
 import 'firebase_options.dart';
 
@@ -17,8 +19,8 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   await FirebaseAppCheck.instance.activate(providerAndroid: AndroidDebugProvider());
+  await FcmService.initialize();
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -27,12 +29,16 @@ class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
-    title: 'FCCU Societies Hub',
-    debugShowCheckedModeBanner: false,
-    theme: lightTheme,
-    darkTheme: darkTheme,
-    themeMode: .system,
-    routerConfig: ref.watch(appRouterProvider),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(appSettingsProvider);
+
+    return MaterialApp.router(
+      title: 'FCCU Societies Hub',
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: settings.themeMode,
+      routerConfig: ref.watch(appRouterProvider),
+    );
+  }
 }

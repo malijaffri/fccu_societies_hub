@@ -13,9 +13,10 @@ abstract class ItemsList<T> extends ConsumerWidget {
 
   final bool Function(T)? filter;
   final bool Function(T)? userFilter;
+  final List<T> Function(List<T>)? transform;
   final String? failMsg;
 
-  const ItemsList({super.key, this.filter, this.userFilter, this.failMsg});
+  const ItemsList({super.key, this.filter, this.userFilter, this.transform, this.failMsg});
 
   FutureProvider<List<T>> get itemsProvider;
 
@@ -38,22 +39,22 @@ abstract class ItemsList<T> extends ConsumerWidget {
         child: itemsAsync.when(
           data: (items) {
             final filtered = filter != null ? items.where(filter!).toList() : items;
-
             final userFiltered = userFilter != null ? filtered.where(userFilter!).toList() : filtered;
+            final displayed = transform != null ? transform!(userFiltered) : userFiltered;
 
-            if (userFiltered.isEmpty) {
+            if (displayed.isEmpty) {
               return EmptyState(
                 icon: icon,
-                title: userFilter == null ? noItemsYet : noItemsFound,
+                title: userFilter == null && transform == null ? noItemsYet : noItemsFound,
                 subtitle: failMsg ?? noItemsLong,
               );
             }
 
             return ListView.separated(
               padding: const .all(AppSpacing.s_16),
-              itemCount: userFiltered.length,
+              itemCount: displayed.length,
               separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.s_16),
-              itemBuilder: (context, index) => itemCard(userFiltered[index]),
+              itemBuilder: (context, index) => itemCard(displayed[index]),
             );
           },
 

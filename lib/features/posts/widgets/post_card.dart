@@ -7,6 +7,7 @@ import 'package:fccu_societies_hub/core/theme/app_radius.dart';
 import 'package:fccu_societies_hub/core/theme/app_spacing.dart';
 import 'package:fccu_societies_hub/features/auth/providers/current_user_provider.dart';
 import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
+import 'package:fccu_societies_hub/features/users/providers/current_user_model_provider.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/post_actions.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/post_header.dart';
 import 'package:fccu_societies_hub/features/posts/widgets/post_media_grid.dart';
@@ -27,7 +28,13 @@ class PostCard extends ConsumerWidget {
     if (post.isLiked) {
       await repo.unlikePost(post.id, uid);
     } else {
-      await repo.likePost(post.id, uid);
+      final userModel = ref.read(currentUserModelProvider).value;
+      await repo.likePost(
+        post.id,
+        uid,
+        actorName: userModel?.name,
+        actorAvatarUrl: userModel?.avatarUrl,
+      );
     }
 
     ref.invalidate(postProvider(post.id));
@@ -65,15 +72,22 @@ class PostCard extends ConsumerWidget {
 
                 const SizedBox(height: AppSpacing.s_12),
 
-                SelectableText(
-                  post.content,
-                  maxLines: compact ? 3 : null,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.42,
-                    fontSize: 15.5,
-                    overflow: compact ? TextOverflow.ellipsis : null,
+                // Use plain Text in compact (list) mode so taps reach the
+                // InkWell. SelectableText intercepts gestures for selection
+                // and blocks the parent onTap. Only use SelectableText in
+                // the full detail view where selection is actually useful.
+                if (compact)
+                  Text(
+                    post.content,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5),
+                  )
+                else
+                  SelectableText(
+                    post.content,
+                    style: theme.textTheme.bodyLarge?.copyWith(height: 1.42, fontSize: 15.5),
                   ),
-                ),
 
                 if (post.media.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.s_12),

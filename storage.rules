@@ -1,0 +1,22 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Post images — any authenticated user can upload; anyone can read
+    match /post_images/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Avatars — any authenticated user can upload their own
+    match /avatars/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 2 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+  }
+}

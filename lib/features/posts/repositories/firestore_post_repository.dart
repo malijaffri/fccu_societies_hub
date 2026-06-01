@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:fccu_societies_hub/features/posts/repositories/post_repository.dart';
+import 'package:fccu_societies_hub/models/notification_item.dart';
 import 'package:fccu_societies_hub/models/post.dart';
 
 class FirestorePostRepository implements PostRepository {
@@ -23,17 +24,12 @@ class FirestorePostRepository implements PostRepository {
     String? currentUserId,
     List<String>? followedSocietyIds,
   }) async {
-    if (followedSocietyIds == null || followedSocietyIds.isEmpty) {
-      return [];
-    }
+    if (followedSocietyIds == null || followedSocietyIds.isEmpty) return [];
 
-    // Firestore whereIn supports at most 30 values per query
     final chunks = <List<String>>[];
     for (var i = 0; i < followedSocietyIds.length; i += 30) {
-      chunks.add(followedSocietyIds.sublist(
-        i,
-        i + 30 > followedSocietyIds.length ? followedSocietyIds.length : i + 30,
-      ));
+      final end = (i + 30).clamp(0, followedSocietyIds.length);
+      chunks.add(followedSocietyIds.sublist(i, end));
     }
 
     final results = await Future.wait(
@@ -45,13 +41,11 @@ class FirestorePostRepository implements PostRepository {
           .get()),
     );
 
-    final posts = results
+    return results
         .expand((s) => s.docs)
         .map((d) => Post.fromMap(d.data(), currentUserId: currentUserId))
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-    return posts;
   }
 
   @override
@@ -59,6 +53,19 @@ class FirestorePostRepository implements PostRepository {
     final snapshot = await _db
         .collection('posts')
         .where('societyId', isEqualTo: societyId)
+        .orderBy('createdAt', descending: true)
+        .limit(20)
+        .get();
+    return snapshot.docs
+        .map((d) => Post.fromMap(d.data(), currentUserId: currentUserId))
+        .toList();
+  }
+
+  @override
+  Future<List<Post>> fetchPostsByUser(String authorId, {String? currentUserId}) async {
+    final snapshot = await _db
+        .collection('posts')
+        .where('authorId', isEqualTo: authorId)
         .orderBy('createdAt', descending: true)
         .limit(20)
         .get();
@@ -82,25 +89,63 @@ class FirestorePostRepository implements PostRepository {
 
   @override
   Future<void> updatePost(Post post) async =>
-      await _db.collection('posts').doc(post.id).set(post.toMap());
+      _db.collection('posts').doc(post.id).set(post.toMap());
 
   @override
   Future<void> deletePost(String postId) async =>
-      await _db.collection('posts').doc(postId).delete();
+      _db.collection('posts').doc(postId).delete();
 
   @override
-  Future<void> likePost(String postId, String userId) async {
-    await _db.collection('posts').doc(postId).update({
+  Future<void> likePost(
+    String postId,
+    String userId, {
+    String? actorName,
+    String? actorAvatarUrl,
+  }) async {
+    final postDoc = await _db.collection('posts').doc(postId).get();
+    if (!postDoc.exists) return;
+
+    final data = postDoc.data()!;
+    final authorId = data['authorId'] as String;
+    final postContent = data['content'] as String? ?? '';
+
+    final batch = _db.batch();
+    batch.update(_db.collection('posts').doc(postId), {
       'likerIds': FieldValue.arrayUnion([userId]),
       'likeCount': FieldValue.increment(1),
     });
+
+    // Notify post author (skip self-likes)
+    if (authorId != userId) {
+      final notifRef = _db
+          .collection('notifications')
+          .doc(authorId)
+          .collection('items')
+          .doc();
+      final preview = postContent.length > 80
+          ? '${postContent.substring(0, 80)}…'
+          : postContent;
+      batch.set(notifRef, {
+        'id': notifRef.id,
+        'type': NotificationType.like.name,
+        'actorId': userId,
+        'actorName': actorName ?? 'Someone',
+        'actorAvatarUrl': actorAvatarUrl,
+        'postId': postId,
+        'postContent': preview,
+        'commentContent': null,
+        'isRead': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+
+    await batch.commit();
   }
 
   @override
-  Future<void> unlikePost(String postId, String userId) async {
-    await _db.collection('posts').doc(postId).update({
-      'likerIds': FieldValue.arrayRemove([userId]),
-      'likeCount': FieldValue.increment(-1),
-    });
-  }
+  Future<void> unlikePost(String postId, String userId) async =>
+      _db.collection('posts').doc(postId).update({
+        'likerIds': FieldValue.arrayRemove([userId]),
+        'likeCount': FieldValue.increment(-1),
+      });
 }

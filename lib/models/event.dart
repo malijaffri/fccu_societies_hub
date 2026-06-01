@@ -17,6 +17,10 @@ class Event extends Equatable {
 
   final String? imageUrl;
 
+  final int rsvpCount;
+  // Computed by repository — not stored in the document.
+  final bool isRsvped;
+
   final DateTime createdAt;
 
   const Event({
@@ -29,19 +33,22 @@ class Event extends Equatable {
     this.end,
     this.location,
     this.imageUrl,
+    this.rsvpCount = 0,
+    this.isRsvped = false,
     required this.createdAt,
   });
 
   factory Event.fromMap(Map<String, dynamic> map) => Event(
-    id: map['id'],
-    societyId: map['societyId'],
-    societyName: map['societyName'],
-    title: map['title'],
-    description: map['description'],
+    id: map['id'] as String,
+    societyId: map['societyId'] as String,
+    societyName: map['societyName'] as String,
+    title: map['title'] as String,
+    description: map['description'] as String,
     start: (map['start'] as Timestamp).toDate(),
     end: map['end'] != null ? (map['end'] as Timestamp).toDate() : null,
-    location: map['location'],
-    imageUrl: map['imageUrl'],
+    location: map['location'] as String?,
+    imageUrl: map['imageUrl'] as String?,
+    rsvpCount: map['rsvpCount'] as int? ?? 0,
     createdAt: (map['createdAt'] as Timestamp).toDate(),
   );
 
@@ -51,10 +58,11 @@ class Event extends Equatable {
     'societyName': societyName,
     'title': title,
     'description': description,
-    'start': start,
-    'end': end,
+    'start': Timestamp.fromDate(start),
+    'end': end != null ? Timestamp.fromDate(end!) : null,
     'location': location,
     'imageUrl': imageUrl,
+    'rsvpCount': rsvpCount,
     'createdAt': Timestamp.fromDate(createdAt),
   };
 
@@ -69,6 +77,8 @@ class Event extends Equatable {
     DateTime? end,
     String? location,
     String? imageUrl,
+    int? rsvpCount,
+    bool? isRsvped,
   }) => Event(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -80,6 +90,8 @@ class Event extends Equatable {
     end: end ?? this.end,
     location: location ?? this.location,
     imageUrl: imageUrl ?? this.imageUrl,
+    rsvpCount: rsvpCount ?? this.rsvpCount,
+    isRsvped: isRsvped ?? this.isRsvped,
   );
 
   @override

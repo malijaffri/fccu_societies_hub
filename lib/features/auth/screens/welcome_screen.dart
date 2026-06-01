@@ -39,7 +39,6 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       body: SafeArea(
@@ -54,24 +53,11 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
 
                 children: [
-                  Center(
-                    child: Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.groups_rounded, size: 48, color: colorScheme.onPrimaryContainer),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.s_32),
-
-                  Text(
-                    'FCCU Societies Hub',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+                  // Brand logo — icon + wordmark
+                  Image.asset(
+                    'assets/images/logo-wordmark.jpg',
+                    width: 260,
+                    fit: BoxFit.contain,
                   ),
 
                   const SizedBox(height: AppSpacing.s_12),
@@ -80,7 +66,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                     'Discover societies, stay updated with events, and connect with your campus community.',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: theme.colorScheme.onSurfaceVariant,
                       height: 1.45,
                     ),
                   ),

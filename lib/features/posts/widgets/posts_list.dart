@@ -13,7 +13,7 @@ class PostsList extends ItemsList<Post> {
 
   final FutureProvider<List<Post>> postsProviderActual;
 
-  PostsList({super.key, FutureProvider<List<Post>>? postsProviderActual, super.filter, super.userFilter, super.failMsg})
+  PostsList({super.key, FutureProvider<List<Post>>? postsProviderActual, super.filter, super.userFilter, super.transform, super.failMsg})
     : postsProviderActual = postsProviderActual ?? postsProvider;
 
   @override

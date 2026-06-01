@@ -60,6 +60,7 @@ class _SocietyDetailsScreenState extends ConsumerState<SocietyDetailsScreen>
     }
     ref.invalidate(societyProvider(widget.societyId));
     ref.invalidate(societiesProvider);
+    ref.invalidate(feedProvider);
   }
 
   Future<void> _toggleMember() async {

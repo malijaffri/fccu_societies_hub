@@ -10,11 +10,15 @@ class StorageService {
 
   Future<String> uploadPostImage(File file) async {
     final name = _uuid.v7();
-
     final ref = _storage.ref().child('post_images/$name.jpg');
-
     await ref.putFile(file);
+    return ref.getDownloadURL();
+  }
 
-    return await ref.getDownloadURL();
+  Future<String> uploadAvatarImage(File file) async {
+    final name = _uuid.v7();
+    final ref = _storage.ref().child('avatars/$name.jpg');
+    await ref.putFile(file);
+    return ref.getDownloadURL();
   }
 }
