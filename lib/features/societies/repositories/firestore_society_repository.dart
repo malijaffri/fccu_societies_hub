@@ -18,15 +18,18 @@ class FirestoreSocietyRepository implements SocietyRepository {
     final doc = await _db.collection('societies').doc(societyId).get();
 
     if (!doc.exists) {
-      return null;
+      throw Exception('Society not found');
     }
 
     return Society.fromMap(doc.data()!);
   }
 
   @override
-  Future<void> createSociety(Society society) async =>
-      await _db.collection('societies').doc(society.id).set(society.toMap());
+  Future<void> createSociety(Society society) async {
+    final doc = _db.collection('societies').doc();
+
+    await doc.set(society.copyWith(id: doc.id).toMap());
+  }
 
   @override
   Future<void> updateSociety(Society society) async =>

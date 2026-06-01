@@ -113,19 +113,19 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: AppSpacing.s_24),
-
-                  TextButton(
-                    onPressed: _isLoading ? null : _guest,
-
-                    child: Padding(
-                      padding: const .symmetric(vertical: AppSpacing.s_12),
-
-                      child: _isLoading
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Text('Continue as Guest'),
-                    ),
-                  ),
+                  // const SizedBox(height: AppSpacing.s_24),
+                  //
+                  // TextButton(
+                  //   onPressed: _isLoading ? null : _guest,
+                  //
+                  //   child: Padding(
+                  //     padding: const .symmetric(vertical: AppSpacing.s_12),
+                  //
+                  //     child: _isLoading
+                  //         ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  //         : const Text('Continue as Guest'),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

@@ -10,7 +10,12 @@ import 'package:fccu_societies_hub/core/widgets/app_loading.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/media_picker_section.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/post_composer_field.dart';
 import 'package:fccu_societies_hub/features/create_post/widgets/society_selector.dart';
+import 'package:fccu_societies_hub/features/media/providers/storage_service_provider.dart';
+import 'package:fccu_societies_hub/features/posts/providers/posts_provider.dart';
 import 'package:fccu_societies_hub/features/societies/providers/societies_provider.dart';
+import 'package:fccu_societies_hub/features/users/providers/current_user_model_provider.dart';
+import 'package:fccu_societies_hub/models/media.dart';
+import 'package:fccu_societies_hub/models/post.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});
@@ -25,6 +30,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   final List<File> _selectedImages = [];
 
   String? _selectedSocietyId;
+  String? _selectedSocietyName;
+  String? _selectedSocietyImage;
 
   bool _isSubmitting = false;
 
@@ -70,13 +77,51 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
     setState(() => _isSubmitting = true);
 
-    await Future.delayed(const .new(seconds: 1));
+    try {
+      final storage = ref.read(storageServiceProvider);
 
-    if (!mounted) {
-      return;
+      final media = await Future.wait(
+        _selectedImages.map((image) async => Media(url: await storage.uploadPostImage(image), type: .image)).toList(),
+      );
+
+      final user = ref.read(currentUserModelProvider).value;
+      // final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        throw Exception('Not authenticated');
+      }
+
+      final post = Post(
+        id: '',
+        isFollowed: false, // TODO
+        isLiked: false, // TODO
+        societyId: _selectedSocietyId!,
+        societyName: _selectedSocietyName!,
+        societyImage: _selectedSocietyImage!,
+        authorId: user.id,
+        authorName: user.name,
+        authorAvatarUrl: user.avatarUrl,
+        content: _contentController.text.trim(),
+        media: media,
+        likeCount: 0,
+        commentCount: 0,
+        createdAt: .now(),
+      );
+
+      await ref.read(postRepositoryProvider).createPost(post);
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.pop(context);
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
-
-    Navigator.pop(context);
   }
 
   void _showError(String message) => ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(message)));
@@ -120,7 +165,12 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
                   value: _selectedSocietyId,
 
-                  onChanged: (value) => setState(() => _selectedSocietyId = value),
+                  onChanged: (value) => setState(() {
+                    _selectedSocietyId = value;
+                    final society = societies.firstWhere((society) => society.id == value);
+                    _selectedSocietyName = society.name;
+                    _selectedSocietyImage = society.imageUrl;
+                  }),
                 ),
 
                 const SizedBox(height: AppSpacing.s_20),

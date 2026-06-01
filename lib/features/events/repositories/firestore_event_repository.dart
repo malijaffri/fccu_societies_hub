@@ -18,14 +18,18 @@ class FirestoreEventRepository implements EventRepository {
     final doc = await _db.collection('events').doc(eventId).get();
 
     if (!doc.exists) {
-      return null;
+      throw Exception('Event not found');
     }
 
     return Event.fromMap(doc.data()!);
   }
 
   @override
-  Future<void> createEvent(Event event) async => await _db.collection('events').doc(event.id).set(event.toMap());
+  Future<void> createEvent(Event event) async {
+    final doc = _db.collection('events').doc();
+
+    await doc.set(event.copyWith(id: doc.id).toMap());
+  }
 
   @override
   Future<void> updateEvent(Event event) async => await _db.collection('events').doc(event.id).set(event.toMap());

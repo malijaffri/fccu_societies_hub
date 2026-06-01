@@ -44,14 +44,22 @@ class Comment extends Equatable {
     'createdAt': Timestamp.fromDate(createdAt),
   };
 
-  Comment copyWith({String? postId, String? userId, String? userName, String? userAvatar, String? content}) => Comment(
-    id: id,
+  Comment copyWith({
+    String? id,
+    DateTime? createdAt,
+    String? postId,
+    String? userId,
+    String? userName,
+    String? userAvatar,
+    String? content,
+  }) => Comment(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
     postId: postId ?? this.postId,
     userId: userId ?? this.userId,
     userName: userName ?? this.userName,
     userAvatar: userAvatar ?? this.userAvatar,
     content: content ?? this.content,
-    createdAt: createdAt,
   );
 
   @override

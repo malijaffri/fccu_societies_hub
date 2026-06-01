@@ -41,13 +41,20 @@ class UserModel extends Equatable {
     'createdAt': Timestamp.fromDate(createdAt),
   };
 
-  UserModel copyWith({String? name, String? email, String? avatarUrl, String? description}) => UserModel(
-    id: id,
+  UserModel copyWith({
+    String? id,
+    DateTime? createdAt,
+    String? name,
+    String? email,
+    String? avatarUrl,
+    String? description,
+  }) => UserModel(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
     name: name ?? this.name,
     email: email ?? this.email,
     avatarUrl: avatarUrl ?? this.avatarUrl,
     description: description ?? this.description,
-    createdAt: createdAt,
   );
 
   @override

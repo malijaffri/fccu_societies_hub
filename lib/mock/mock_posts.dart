@@ -14,6 +14,7 @@ final mockPosts =
               isFollowed: society.isFollowed,
               authorId: '$i',
               authorName: 'User $i',
+              authorAvatarUrl: i % 3 != 0 ? 'https://placehold.co/600x600.jpg' : null,
               content: 'Content of Post ${society.id}.$i\n\nWith newlines. **bold**. _italic_.',
               media: .generate(i, (j) => const .new(url: 'https://placehold.co/600x600.jpg', type: .image)),
               likeCount: i * 3,

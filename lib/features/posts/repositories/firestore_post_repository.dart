@@ -25,14 +25,18 @@ class FirestorePostRepository implements PostRepository {
     final doc = await _db.collection('posts').doc(postId).get();
 
     if (!doc.exists) {
-      return null;
+      throw Exception('Post not found');
     }
 
     return Post.fromMap(doc.data()!);
   }
 
   @override
-  Future<void> createPost(Post post) async => await _db.collection('posts').doc(post.id).set(post.toMap());
+  Future<void> createPost(Post post) async {
+    final doc = _db.collection('posts').doc();
+
+    await doc.set(post.copyWith(id: doc.id).toMap());
+  }
 
   @override
   Future<void> updatePost(Post post) async => await _db.collection('posts').doc(post.id).set(post.toMap());

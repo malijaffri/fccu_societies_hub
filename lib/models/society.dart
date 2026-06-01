@@ -52,6 +52,8 @@ class Society extends Equatable {
   };
 
   Society copyWith({
+    String? id,
+    DateTime? createdAt,
     String? name,
     String? imageUrl,
     String? description,
@@ -60,8 +62,8 @@ class Society extends Equatable {
     bool? isFollowed,
     bool? isMember,
   }) => Society(
-    id: id,
-    createdAt: createdAt,
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
     name: name ?? this.name,
     imageUrl: imageUrl ?? this.imageUrl,
     description: description ?? this.description,

@@ -59,6 +59,8 @@ class Event extends Equatable {
   };
 
   Event copyWith({
+    String? id,
+    DateTime? createdAt,
     String? societyId,
     String? societyName,
     String? title,
@@ -68,8 +70,8 @@ class Event extends Equatable {
     String? location,
     String? imageUrl,
   }) => Event(
-    id: id,
-    createdAt: createdAt,
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
     societyId: societyId ?? this.societyId,
     societyName: societyName ?? this.societyName,
     title: title ?? this.title,

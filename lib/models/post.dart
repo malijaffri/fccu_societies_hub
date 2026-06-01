@@ -13,6 +13,7 @@ class Post extends Equatable {
 
   final String authorId;
   final String authorName;
+  final String? authorAvatarUrl;
 
   final String content;
 
@@ -34,6 +35,7 @@ class Post extends Equatable {
     required this.isFollowed,
     required this.authorId,
     required this.authorName,
+    this.authorAvatarUrl,
     required this.content,
     required this.media,
     required this.likeCount,
@@ -51,8 +53,9 @@ class Post extends Equatable {
     isFollowed: map['isFollowed'],
     authorId: map['authorId'],
     authorName: map['authorName'],
+    authorAvatarUrl: map['authorAvatarUrl'],
     content: map['content'],
-    media: map['media'],
+    media: (map['media'] as List<Map<String, dynamic>>).map((e) => Media.fromMap(e)).toList(),
     likeCount: map['likeCount'],
     commentCount: map['commentCount'],
     createdAt: (map['createdAt'] as Timestamp).toDate(),
@@ -68,6 +71,7 @@ class Post extends Equatable {
     'isFollowed': isFollowed,
     'authorId': authorId,
     'authorName': authorName,
+    'authorAvatarUrl': authorAvatarUrl,
     'createdAt': Timestamp.fromDate(createdAt),
     'content': content,
     'media': media,
@@ -78,12 +82,15 @@ class Post extends Equatable {
   };
 
   Post copyWith({
+    String? id,
+    DateTime? createdAt,
     String? societyId,
     String? societyName,
     String? societyImage,
     bool? isFollowed,
     String? authorId,
     String? authorName,
+    String? authorAvatarUrl,
     String? content,
     List<Media>? media,
     int? likeCount,
@@ -91,14 +98,15 @@ class Post extends Equatable {
     bool? isLiked,
     String? eventId,
   }) => Post(
-    id: id,
-    createdAt: createdAt,
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
     societyId: societyId ?? this.societyId,
     societyName: societyName ?? this.societyName,
     societyImage: societyImage ?? this.societyImage,
     isFollowed: isFollowed ?? this.isFollowed,
     authorId: authorId ?? this.authorId,
     authorName: authorName ?? this.authorName,
+    authorAvatarUrl: authorAvatarUrl ?? this.authorAvatarUrl,
     content: content ?? this.content,
     media: media ?? this.media,
     likeCount: likeCount ?? this.likeCount,

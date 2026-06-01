@@ -75,17 +75,17 @@ final _cardShape = RoundedRectangleBorder(borderRadius: .circular(AppRadius.r_16
 final _fabShape = RoundedRectangleBorder(borderRadius: .circular(AppRadius.r_16));
 
 const _textTheme = TextTheme(
-  headlineMedium: .new(fontSize: 28, fontWeight: .w700, letterSpacing: -0.5),
+  headlineMedium: TextStyle(fontSize: 28, fontWeight: .w700, letterSpacing: -0.5),
 
-  titleLarge: .new(fontSize: 20, fontWeight: .w700),
+  titleLarge: TextStyle(fontSize: 20, fontWeight: .w700),
 
-  titleMedium: .new(fontSize: 16, fontWeight: .w600),
+  titleMedium: TextStyle(fontSize: 16, fontWeight: .w600),
 
-  bodyLarge: .new(fontSize: 16, height: 1.5),
+  bodyLarge: TextStyle(fontSize: 16, height: 1.5),
 
-  bodyMedium: .new(fontSize: 14, height: 1.45),
+  bodyMedium: TextStyle(fontSize: 14, height: 1.45),
 
-  bodySmall: .new(fontSize: 12, height: 1.4),
+  bodySmall: TextStyle(fontSize: 12, height: 1.4),
 );
 
 final lightTheme = ThemeData(
@@ -101,7 +101,7 @@ final lightTheme = ThemeData(
 
   appBarTheme: _appBarTheme,
 
-  cardTheme: .new(elevation: 0, margin: .zero, color: Colors.white, shape: _cardShape),
+  cardTheme: CardThemeData(elevation: 0, margin: .zero, color: Colors.white, shape: _cardShape),
 
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
@@ -129,7 +129,7 @@ final lightTheme = ThemeData(
     ),
   ),
 
-  navigationBarTheme: .new(
+  navigationBarTheme: NavigationBarThemeData(
     elevation: 0,
 
     backgroundColor: AppColors.lightSurface,
@@ -163,7 +163,7 @@ final darkTheme = ThemeData(
 
   appBarTheme: _appBarTheme,
 
-  cardTheme: .new(elevation: 0, margin: .zero, color: AppColors.darkSurface, shape: _cardShape),
+  cardTheme: CardThemeData(elevation: 0, margin: .zero, color: AppColors.darkSurface, shape: _cardShape),
 
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
@@ -191,7 +191,7 @@ final darkTheme = ThemeData(
     // ),
   ),
 
-  navigationBarTheme: .new(
+  navigationBarTheme: NavigationBarThemeData(
     elevation: 0,
 
     backgroundColor: AppColors.darkSurface,
